@@ -1,0 +1,12 @@
+{
+  "type": "neovitae:flask_effect",
+  "baseDuration": 1200,
+  "effect": "neovitae:soulsnare",
+  "input": [
+    "neovitae:simple_catalyst",
+    "neovitae:spiritus_gem_petty"
+  ],
+  "syphon": 500,
+  "ticks": 200,
+  "upgradeLevel": 1
+}

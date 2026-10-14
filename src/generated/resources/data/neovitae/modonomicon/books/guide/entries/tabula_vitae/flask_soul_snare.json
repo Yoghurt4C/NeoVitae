@@ -1,0 +1,35 @@
+{
+  "type": "modonomicon:content",
+  "background": {
+    "height": 26,
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26
+  },
+  "category": "neovitae:tabula_vitae",
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "neovitae:generated/guide/nodes/entry_viewed_once/required/tabula_vitae_potion_crafting",
+    "tooltip": {
+      "translate": "tooltip.modonomicon.condition.entry_unlocked",
+      "with": [
+        {
+          "translate": "book.neovitae.guide.tabula_vitae.potion_crafting.name"
+        }
+      ]
+    }
+  },
+  "description": "book.neovitae.guide.tabula_vitae.flask_soul_snare.description",
+  "icon": {
+    "id": "neovitae:alchemy_flask"
+  },
+  "id": "neovitae:tabula_vitae/flask_soul_snare",
+  "name": "book.neovitae.guide.tabula_vitae.flask_soul_snare.name",
+  "parents": [
+    {
+      "entry": "neovitae:tabula_vitae/potion_crafting"
+    }
+  ],
+  "sort_number": 40,
+  "x": 8,
+  "y": -1
+}

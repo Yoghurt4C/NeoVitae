@@ -21,7 +21,7 @@ public class TabulaVitaeCategory extends CategoryProvider {
                 "__b_________c____",
                 "_d_e_f__p_q_r_s_u",
                 "_g_h_i__v_x_y_z_A",
-                "_j_k_l__D_E_J_M__",
+                "_j_k_l__D_E_J_M_O",
                 "_m_n_o__B_t______",
                 "________w_N______",
                 "________G_C_K____",
@@ -241,6 +241,11 @@ public class TabulaVitaeCategory extends CategoryProvider {
         flight.withCondition(this.condition().entryViewedOnce(suspended));
         flight.showWhenAnyParentUnlocked(true);
         flight.hideWhileLocked(false);
+
+        var soulSnare = this.add(new SoulSnareFlaskEntry(this).generate('O'));
+        soulSnare.withParent(this.parent(potions));
+        soulSnare.withCondition(this.condition().entryViewedOnce(potions));
+        soulSnare.hideWhileLocked(false);
     }
 
     @Override

@@ -29,7 +29,6 @@ import com.breakinblocks.neovitae.common.item.soul.SpiritusEssenceItem;
 import com.breakinblocks.neovitae.common.item.soul.SentientSpearItem;
 import com.breakinblocks.neovitae.common.item.soul.SentientToolHelper;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +47,10 @@ public class SpiritusEventHandler {
         }
 
         if (killed.hasEffect(NVMobEffects.SPIRITUS_SNARE)) {
-            Player snareKiller = event.getSource().getEntity() instanceof Player p ? p : null;
-            handleSnareDrop(killed, snareKiller);
+            Player snareKiller = event.getSource().getEntity() instanceof Player p ? p : killed.getLastHurtByPlayer();
+            if (snareKiller != null) {
+                handleSnareDrop(killed, snareKiller);
+            }
             return;
         }
 
@@ -108,7 +109,7 @@ public class SpiritusEventHandler {
         }
     }
 
-    private static void handleSnareDrop(LivingEntity killed, @Nullable Player killer) {
+    private static void handleSnareDrop(LivingEntity killed, Player killer) {
         if (killed.level().getDifficulty() == Difficulty.PEACEFUL || !(killed instanceof Enemy)) {
             return;
         }
@@ -117,11 +118,9 @@ public class SpiritusEventHandler {
         double soulAmount = spiritusModifier * (SNARE_BASE_DROP + killed.level().getRandom().nextDouble() * SNARE_RANDOM_DROP)
                 * killed.getMaxHealth() / 20d;
 
-        if (killer != null) {
-            double bonusSpiritus = killer.getAttributeValue(NVAttributes.BONUS_SPIRITUS);
-            if (bonusSpiritus > 0) {
-                soulAmount *= (1 + bonusSpiritus / 100);
-            }
+        double bonusSpiritus = killer.getAttributeValue(NVAttributes.BONUS_SPIRITUS);
+        if (bonusSpiritus > 0) {
+            soulAmount *= (1 + bonusSpiritus / 100);
         }
 
         SpiritusEssenceItem soulItem = NVItems.MONSTER_SOUL_RAW.get();

@@ -1,0 +1,10 @@
+{
+  "type": "neovitae:flask_recipe",
+  "condition": {
+    "type": "modonomicon:none"
+  },
+  "id": "recipe1",
+  "recipe_id_1": "neovitae:flask/spiritus_snare",
+  "recipe_id_2": "neovitae:flask/length_spiritus_snare",
+  "sort_number": 1
+}
