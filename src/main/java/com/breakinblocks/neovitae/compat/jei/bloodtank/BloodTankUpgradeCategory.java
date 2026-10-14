@@ -1,6 +1,7 @@
 package com.breakinblocks.neovitae.compat.jei.bloodtank;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -9,9 +10,11 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.Tags;
 import com.breakinblocks.neovitae.NeoVitae;
 import com.breakinblocks.neovitae.common.block.NVBlocks;
 
@@ -33,7 +36,6 @@ public class BloodTankUpgradeCategory implements IRecipeCategory<BloodTankUpgrad
 
     @Nonnull private final IDrawable icon;
     @Nonnull private final IDrawable slot;
-    private final ItemStack glass = new ItemStack(Items.GLASS);
     private final ItemStack bloodstone;
 
     public BloodTankUpgradeCategory(IGuiHelper guiHelper) {
@@ -53,20 +55,21 @@ public class BloodTankUpgradeCategory implements IRecipeCategory<BloodTankUpgrad
 
     @Override
     public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull BloodTankUpgradeJEIRecipe recipe, @Nonnull IFocusGroup focuses) {
-        addInput(builder, 0, 0, glass);
-        addInput(builder, 2, 0, glass);
-        addInput(builder, 0, 1, recipe.inputTank());
-        addInput(builder, 1, 1, glass);
-        addInput(builder, 2, 1, recipe.inputTank());
-        addInput(builder, 0, 2, glass);
-        addInput(builder, 1, 2, bloodstone);
-        addInput(builder, 2, 2, glass);
+        Ingredient glass = Ingredient.of(BuiltInRegistries.ITEM.get(Tags.Items.GLASS_BLOCKS_COLORLESS).orElseThrow());
+        input(builder, 0, 0).add(glass);
+        input(builder, 2, 0).add(glass);
+        input(builder, 0, 1).add(recipe.inputTank());
+        input(builder, 1, 1).add(glass);
+        input(builder, 2, 1).add(recipe.inputTank());
+        input(builder, 0, 2).add(glass);
+        input(builder, 1, 2).add(bloodstone);
+        input(builder, 2, 2).add(glass);
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X + 1, cellY(1) + 1).add(recipe.outputTank());
     }
 
-    private void addInput(IRecipeLayoutBuilder builder, int col, int row, ItemStack stack) {
-        builder.addSlot(RecipeIngredientRole.INPUT, cellX(col) + 1, cellY(row) + 1).add(stack);
+    private IRecipeSlotBuilder input(IRecipeLayoutBuilder builder, int col, int row) {
+        return builder.addSlot(RecipeIngredientRole.INPUT, cellX(col) + 1, cellY(row) + 1);
     }
 
     @Override

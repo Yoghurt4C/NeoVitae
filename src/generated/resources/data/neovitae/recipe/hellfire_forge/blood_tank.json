@@ -2,9 +2,9 @@
   "type": "neovitae:hellfire_forge",
   "drain": 5.0,
   "inputs": [
-    "minecraft:glass",
-    "minecraft:glass",
-    "minecraft:glass",
+    "#c:glass_blocks/colorless",
+    "#c:glass_blocks/colorless",
+    "#c:glass_blocks/colorless",
     "neovitae:bloodstone"
   ],
   "minDrain": 30.0,

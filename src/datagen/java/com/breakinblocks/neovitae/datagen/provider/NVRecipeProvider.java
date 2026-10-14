@@ -243,7 +243,7 @@ public class NVRecipeProvider extends RecipeProvider {
                 .requires(NVBlocks.VITAE_LINK.block().get())
                 .requires(Items.IRON_INGOT)
                 .requires(Items.IRON_INGOT)
-                .requires(Items.GLASS)
+                .requires(Tags.Items.GLASS_BLOCKS_COLORLESS)
                 .unlockedBy("has_vitae_link", has(NVBlocks.VITAE_LINK.block().get()))
                 .save(output, rKey(NeoVitae.rl("orb_filling_link")));
 
@@ -712,7 +712,7 @@ public class NVRecipeProvider extends RecipeProvider {
                 .pattern("g g")
                 .pattern("tgt")
                 .pattern("gsg")
-                .define('g', Items.GLASS)
+                .define('g', Tags.Items.GLASS_BLOCKS_COLORLESS)
                 .define('t', NVBlocks.BLOOD_TANK.block().get())
                 .define('s', NVBlocks.BLOODSTONE.block().get())
                 .primary(3) // slot index for primary tank
@@ -1109,7 +1109,7 @@ public class NVRecipeProvider extends RecipeProvider {
 
         // Blood Tank
         HellfireForgeRecipeBuilder.build(NVBlocks.BLOOD_TANK.block().get())
-                .requires(Items.GLASS, 3)
+                .requires(Ingredient.of(items.getOrThrow(Tags.Items.GLASS_BLOCKS_COLORLESS)), 3)
                 .requires(NVBlocks.BLOODSTONE.block().get())
                 .minSpiritus(30)
                 .drain(5)

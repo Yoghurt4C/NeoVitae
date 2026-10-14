@@ -3,7 +3,7 @@
   "category": "misc",
   "pattern": {
     "key": {
-      "g": "minecraft:glass",
+      "g": "#c:glass_blocks/colorless",
       "s": "neovitae:bloodstone",
       "t": "neovitae:blood_tank"
     },

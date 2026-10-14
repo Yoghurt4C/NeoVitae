@@ -5,7 +5,7 @@
     "neovitae:vitae_link",
     "minecraft:iron_ingot",
     "minecraft:iron_ingot",
-    "minecraft:glass"
+    "#c:glass_blocks/colorless"
   ],
   "result": {
     "id": "neovitae:orb_filling_link"
