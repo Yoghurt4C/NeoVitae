@@ -96,7 +96,7 @@ public class DeusRitualsEntry extends EntryProvider {
                 .withMultiblockId(Identifier.fromNamespaceAndPath(NeoVitae.MODID, "ritual/deus_meteor"))
                 .withMultiblockName("Deus Meteo")
                 .withText(this.context().pageText()));
-        this.pageText("Calls the same meteors as the Ritual of Meteo, but every outer layer is [#](8B0000)pure ore[#](), with no filler stone at all.");
+        this.pageText("Calls the same meteors as the Ritual of Meteo, but each layer keeps only its [#](8B0000)ores and other valuables[#](), with no filler stone at all.");
 
         this.page("deus_meteor_stats", () -> BookRitualInfoPageModel.create()
                 .withText(RitualStatsHelper.generateStats("deus_meteor")));

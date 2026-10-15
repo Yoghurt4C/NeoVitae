@@ -261,8 +261,13 @@ public class NVBlockTagProvider extends BlockTagsProvider {
                 .addOptionalTag(Tags.Blocks.COBBLESTONES);
 
         this.tag(NVTags.Blocks.QUARRY_BLOCKS)
-                .add(Blocks.GLOWSTONE, Blocks.BONE_BLOCK)
-                .addTag(Tags.Blocks.ORES);
+                .add(Blocks.GLOWSTONE, Blocks.BONE_BLOCK, Blocks.QUARTZ_BLOCK, Blocks.GILDED_BLACKSTONE)
+                .addTag(Tags.Blocks.ORES)
+                .addOptionalTag(NVTags.Blocks.GENERATIVE_ORES)
+                .addOptionalTag(TagKey.create(Registries.BLOCK,
+                        Identifier.fromNamespaceAndPath("c", "storage_blocks/certus_quartz")));
+        getOrCreateRawBuilder(NVTags.Blocks.QUARRY_BLOCKS)
+                .addOptionalElement(Identifier.fromNamespaceAndPath("ae2", "fluix_block"));
 
         // Mushroom blocks for fungal charges
         this.tag(NVTags.Blocks.MUSHROOM_STEM)

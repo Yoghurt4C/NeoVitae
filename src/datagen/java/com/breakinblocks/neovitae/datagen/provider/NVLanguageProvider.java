@@ -1545,7 +1545,7 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         add("ritual.neovitae.deus_placer.spiritus.raw", "Raw Spiritus quickens the work and widens the domain: 20 raw for 32 blocks a pulse and 80,000 blocks of room, 50 raw for 64 and 320,000.");
         addRitual("deus_felling", "Deus Fallen Trees", "A Deus Fallen Trees: fells up to 512 blocks each operation across a 41-wide area and replants from its drops or the chest.");
         addRitual("deus_armour_evolve", "Deus Sentient Evolution", "A Deus Sentient Evolution: stand on the master stone in Sentient Armor that holds 500 Upgrade Points to raise its capacity to 600 and bind Blood Mending into every worn piece.");
-        addRitual("deus_meteor", "Deus Meteo", "A Deus Meteo: calls the same meteors as the Ritual of Meteo, but every outer layer is pure ore with no filler stone.");
+        addRitual("deus_meteor", "Deus Meteo", "A Deus Meteo: calls the same meteors as the Ritual of Meteo, but each layer keeps only its ores and other valuable blocks, with no filler stone. A layer with nothing valuable falls as it would from the Ritual of Meteo.");
         add("gui.neovitae.configurator.mining_mode", "Mining:");
         add("gui.neovitae.configurator.mining.silk_touch", "Silk Touch");
         add("gui.neovitae.configurator.mining.fortune", "Fortune III");

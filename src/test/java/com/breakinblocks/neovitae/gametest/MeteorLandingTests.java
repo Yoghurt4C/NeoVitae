@@ -4,19 +4,26 @@ import com.breakinblocks.neovitae.gametest.base.NVTestRegistrar;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import com.breakinblocks.neovitae.api.soul.AnimaTicket;
 import com.breakinblocks.neovitae.common.datacomponent.Anima;
 import com.breakinblocks.neovitae.common.entity.projectile.EntityMeteor;
 import com.breakinblocks.neovitae.common.meteor.MeteorLayer;
+import com.breakinblocks.neovitae.common.meteor.RandomBlockContainer;
+import com.breakinblocks.neovitae.common.recipe.NVRecipes;
 import com.breakinblocks.neovitae.common.recipe.meteor.MeteorRecipe;
 import com.breakinblocks.neovitae.ritual.types.RitualMeteor;
 import com.breakinblocks.neovitae.util.helper.AnimaHelper;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +37,10 @@ public final class MeteorLandingTests {
         r.add("meteor/filled_landing_area_is_blocked", 20, MeteorLandingTests::filledLandingAreaIsBlocked);
         r.add("meteor/stray_leftovers_do_not_block_landing", 20, MeteorLandingTests::strayLeftoversDoNotBlockLanding);
         r.add("meteor/chest_offerings_used_in_order_one_meteor_at_a_time", 20, MeteorLandingTests::chestOfferingsAreUsedInOrderOneMeteorAtATime);
+        r.add("meteor/deus_without_ores_builds_normal_meteor", 20, MeteorLandingTests::deusWithoutOresBuildsNormalMeteor);
+        r.add("meteor/deus_with_ores_keeps_only_ore", 20, MeteorLandingTests::deusWithOresKeepsOnlyOre);
+        r.add("meteor/impact_blast_does_not_hurt", 20, MeteorLandingTests::impactBlastDoesNotHurt);
+        r.add("meteor/every_recipe_layer_keeps_blocks_under_deus", 20, MeteorLandingTests::everyRecipeLayerKeepsBlocksUnderDeus);
     }
 
     private static final BlockPos CENTER = new BlockPos(2, 2, 2);
@@ -37,6 +48,52 @@ public final class MeteorLandingTests {
 
     private static MeteorRecipe smallMeteor() {
         return new MeteorRecipe(Ingredient.of(Items.BARRIER), 0, 0, List.of(new MeteorLayer(2, 0, Blocks.STONE)));
+    }
+
+    private static void deusWithoutOresBuildsNormalMeteor(GameTestHelper helper) {
+        MeteorRecipe recipe = new MeteorRecipe(Ingredient.of(Items.BARRIER), 0, 0,
+                List.of(new MeteorLayer(1, 0, Blocks.OBSIDIAN)));
+        recipe.spawnMeteorInWorld(helper.getLevel(), helper.absolutePos(CENTER), true);
+        helper.assertBlockPresent(Blocks.OBSIDIAN, CENTER);
+        helper.succeed();
+    }
+
+    private static void deusWithOresKeepsOnlyOre(GameTestHelper helper) {
+        MeteorLayer layer = new MeteorLayer(1, 0,
+                List.of(Pair.of(RandomBlockContainer.parseEntry("minecraft:iron_ore"), 100)),
+                RandomBlockContainer.parseEntry("minecraft:obsidian"));
+        MeteorRecipe recipe = new MeteorRecipe(Ingredient.of(Items.BARRIER), 0, 0, List.of(layer));
+        recipe.spawnMeteorInWorld(helper.getLevel(), helper.absolutePos(CENTER), true);
+        helper.assertBlockPresent(Blocks.IRON_ORE, CENTER);
+        helper.assertBlockPresent(Blocks.IRON_ORE, CENTER.east());
+        helper.succeed();
+    }
+
+    private static void everyRecipeLayerKeepsBlocksUnderDeus(GameTestHelper helper) {
+        var recipes = helper.getLevel().recipeAccess().recipeMap().byType(NVRecipes.METEOR_TYPE.get());
+        helper.assertTrue(!recipes.isEmpty(), "No meteor recipes found");
+        for (RecipeHolder<MeteorRecipe> holder : recipes) {
+            List<MeteorLayer> layers = holder.value().getLayerList();
+            for (int i = 0; i < layers.size(); i++) {
+                helper.assertTrue(layers.get(i).producesQuarryBlocks(helper.getLevel()),
+                        holder.id().identifier() + " layer " + i + " has no block in neovitae:quarry_blocks");
+            }
+        }
+        helper.succeed();
+    }
+
+    private static void impactBlastDoesNotHurt(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        Vec3 standAt = helper.absoluteVec(new Vec3(CENTER.getX() + 3.5, CENTER.getY(), CENTER.getZ() + 0.5));
+        player.setPos(standAt.x, standAt.y, standAt.z);
+        helper.getLevel().addFreshEntity(player);
+        float before = player.getHealth();
+        MeteorRecipe recipe = new MeteorRecipe(Ingredient.of(Items.BARRIER), 0, 24.0F,
+                List.of(new MeteorLayer(1, 0, Blocks.STONE)));
+        recipe.spawnMeteorInWorld(helper.getLevel(), helper.absolutePos(CENTER));
+        helper.assertTrue(player.getHealth() == before, "The meteor impact should not hurt, health went from " + before + " to " + player.getHealth());
+        helper.assertTrue(player.getDeltaMovement().lengthSqr() < 0.01, "The meteor impact should not knock players back");
+        helper.succeed();
     }
 
     private static void emptyLandingAreaIsClear(GameTestHelper helper) {

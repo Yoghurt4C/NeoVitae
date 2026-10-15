@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.PlacementInfo;
@@ -15,8 +16,11 @@ import net.minecraft.world.item.crafting.RecipeBookCategories;
 import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import com.breakinblocks.neovitae.common.meteor.MeteorLayer;
 import com.breakinblocks.neovitae.common.recipe.NVRecipeCodecs;
 import com.breakinblocks.neovitae.common.recipe.NVRecipes;
@@ -30,6 +34,18 @@ import java.util.*;
 public class MeteorRecipe implements Recipe<MeteorInput> {
 
     public static final String RECIPE_TYPE_NAME = "meteor";
+
+    private static final ExplosionDamageCalculator HARMLESS_IMPACT = new ExplosionDamageCalculator() {
+        @Override
+        public boolean shouldDamageEntity(Explosion explosion, Entity entity) {
+            return false;
+        }
+
+        @Override
+        public float getKnockbackMultiplier(Entity entity) {
+            return 0.0F;
+        }
+    };
 
     public static final MapCodec<MeteorRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             NVRecipeCodecs.INGREDIENT.fieldOf("input").forGetter(MeteorRecipe::getInput),
@@ -64,8 +80,8 @@ public class MeteorRecipe implements Recipe<MeteorInput> {
 
     public void spawnMeteorInWorld(Level level, BlockPos centerPos, boolean oresOnly) {
         if (explosionRadius > 0) {
-            level.explode(null, centerPos.getX(), centerPos.getY(), centerPos.getZ(),
-                    explosionRadius, Level.ExplosionInteraction.NONE);
+            level.explode(null, null, HARMLESS_IMPACT, new Vec3(centerPos.getX(), centerPos.getY(), centerPos.getZ()),
+                    explosionRadius, false, Level.ExplosionInteraction.NONE);
         }
 
         Map<Integer, MeteorLayer> layerMap = new HashMap<>();
