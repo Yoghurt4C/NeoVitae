@@ -5,7 +5,11 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import com.breakinblocks.neovitae.common.block.NVBlocks;
+import com.breakinblocks.neovitae.common.recipe.NVRecipes;
+import com.breakinblocks.neovitae.common.datacomponent.SpiritusType;
+import com.breakinblocks.neovitae.common.block.AthanorBlock;
 import com.breakinblocks.neovitae.common.blockentity.AthanorBlockEntity;
 import com.breakinblocks.neovitae.common.item.NVItems;
 import com.breakinblocks.neovitae.gametest.base.NVTestRegistrar;
@@ -53,6 +57,33 @@ public final class AthanorTests {
                     helper.assertTrue(output.is(Items.IRON_INGOT), "Expected iron ingot, got " + output);
                 });
             });
+        });
+
+        r.add("athanor/working_without_spiritus_glows_red", 300, helper -> {
+            helper.setBlock(new BlockPos(3, 0, 2), Blocks.STONE.defaultBlockState());
+            AthanorBlockEntity arc = placeARC(helper, new BlockPos(3, 1, 2));
+            helper.runAfterDelay(1, () -> {
+                if (arc == null) return;
+                arc.athanorInv.setStackInSlot(AthanorBlockEntity.TOOL_SLOT, new ItemStack(NVItems.PRIMITIVE_FURNACE_CELL.get()));
+                arc.athanorInv.setStackInSlot(AthanorBlockEntity.INPUT_START, new ItemStack(Items.RAW_IRON, 8));
+                helper.succeedWhen(() -> {
+                    BlockState state = helper.getBlockState(new BlockPos(3, 1, 2));
+                    helper.assertTrue(state.getValue(AthanorBlock.LIT), "The Athanor should be lit while smelting");
+                    helper.assertTrue(state.getValue(AthanorBlock.GLOW) == 0, "Smelting uses no Spiritus, so the grill should glow plain red");
+                });
+            });
+        });
+
+        r.add("athanor/glow_mask_lists_every_spiritus_type_in_the_recipe", 20, helper -> {
+            var holder = helper.getLevel().recipeAccess().recipeMap().byType(NVRecipes.ATHANOR_TYPE.get()).stream()
+                    .filter(h -> h.id().identifier().getPath().equals("athanor/orb/prismatic_spiritus_gem"))
+                    .findFirst();
+            helper.assertTrue(holder.isPresent(), "The prismatic gem recipe should load");
+            int mask = AthanorBlockEntity.spiritusMask(holder.get().value());
+            helper.assertTrue(mask == (1 << SpiritusType.values().length) - 1,
+                    "A recipe using all five Spiritus types should light every bit, got " + Integer.toBinaryString(mask));
+            helper.assertTrue(AthanorBlock.GLOW.getPossibleValues().contains(mask), "The glow property should hold every mask");
+            helper.succeed();
         });
 
         r.add("athanor/smelts_from_non_first_input_slot", 300, helper -> {
