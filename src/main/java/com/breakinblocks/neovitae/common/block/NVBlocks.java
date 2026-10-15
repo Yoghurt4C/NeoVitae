@@ -164,6 +164,7 @@ public class NVBlocks {
     public static final BlockWithItemHolder<BlockRitualStone, BlockItem> DEUS_RITUAL_STONE = BLOCK_REG.register("deus_ritual_stone", props -> new BlockRitualStone(props, EnumRuneType.DEUS), defaultBlockProps());
     public static final BlockWithItemHolder<BlockMasterRitualStone, BlockItem> MASTER_RITUAL_STONE = BLOCK_REG.register("master_ritual_stone", props -> new BlockMasterRitualStone(props, false), defaultBlockProps());
     public static final BlockWithItemHolder<BlockMasterRitualStone, BlockItem> INVERTED_MASTER_RITUAL_STONE = BLOCK_REG.register("inverted_master_ritual_stone", props -> new BlockMasterRitualStone(props, true), defaultBlockProps());
+    public static final BlockWithItemHolder<RitualAnchorBlock, BlockItem> RITUAL_ANCHOR = BLOCK_REG.register("ritual_anchor", RitualAnchorBlock::new, defaultBlockProps());
     public static final BlockWithItemHolder<BlockImperfectRitualStone, BlockItem> IMPERFECT_RITUAL_STONE = BLOCK_REG.register("imperfect_ritual_stone", BlockImperfectRitualStone::new, defaultBlockProps());
 
     public static final BlockWithItemHolder<VasMaleficumBlock, BlockItem> VAS_MALEFICUM = BLOCK_REG.register("vas_maleficum", VasMaleficumBlock::new, defaultBlockProps());

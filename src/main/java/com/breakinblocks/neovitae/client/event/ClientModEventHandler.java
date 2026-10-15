@@ -76,6 +76,7 @@ import com.breakinblocks.neovitae.client.screen.RitualLedgerScreen;
 import com.breakinblocks.neovitae.client.screen.SpiritCacheScreen;
 import com.breakinblocks.neovitae.client.screen.TeleposerScreen;
 import com.breakinblocks.neovitae.client.color.AthanorGlowColor;
+import com.breakinblocks.neovitae.client.color.RitualAnchorColor;
 import com.breakinblocks.neovitae.client.color.RoutingNodeColor;
 import com.breakinblocks.neovitae.common.block.NVBlocks;
 import com.breakinblocks.neovitae.common.item.NVItems;
@@ -161,6 +162,7 @@ public class ClientModEventHandler {
                 NVBlocks.OUTPUT_ROUTING_NODE.block().get(),
                 NVBlocks.OMNI_ROUTING_NODE.block().get());
         event.register(List.of(new AthanorGlowColor()), NVBlocks.ATHANOR_BLOCK.block().get());
+        event.register(List.of(new RitualAnchorColor()), NVBlocks.RITUAL_ANCHOR.block().get());
     }
 
     @SubscribeEvent

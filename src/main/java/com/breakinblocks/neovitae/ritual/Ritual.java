@@ -77,6 +77,10 @@ public abstract class Ritual {
         return false;
     }
 
+    public boolean canUseAnchor() {
+        return true;
+    }
+
     protected RitualStats getStats() {
         return RitualRegistry.getStats(this);
     }

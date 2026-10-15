@@ -65,6 +65,7 @@ public class NVGameTestRegistration {
         SentientSpearTests.register(r);
         SuppressionRitualTests.register(r);
         CelerityRitualTests.register(r);
+        RitualAnchorTests.register(r);
         DungeonBlockRotationTests.register(r);
     }
 }

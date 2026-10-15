@@ -109,6 +109,7 @@ public class NVBlockTagProvider extends BlockTagsProvider {
                 .add(NVBlocks.DEUS_RITUAL_STONE.block().get())
                 .add(NVBlocks.MASTER_RITUAL_STONE.block().get())
                 .add(NVBlocks.INVERTED_MASTER_RITUAL_STONE.block().get())
+                .add(NVBlocks.RITUAL_ANCHOR.block().get())
                 .add(NVBlocks.IMPERFECT_RITUAL_STONE.block().get())
                 .add(NVBlocks.VAS_MALEFICUM.block().get())
                 .add(NVBlocks.SPIRIT_ACCUMULATOR.block().get())

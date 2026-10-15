@@ -274,5 +274,11 @@
     "required_facts": [
       "neovitae:generated/guide/facts/entry_viewed_once/rituals_activation_crystals"
     ]
+  },
+  {
+    "id": "neovitae:generated/guide/nodes/entry_viewed_once/required/rituals_ritual_tinkerer",
+    "required_facts": [
+      "neovitae:generated/guide/facts/entry_viewed_once/rituals_ritual_tinkerer"
+    ]
   }
 ]

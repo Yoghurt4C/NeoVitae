@@ -274,5 +274,11 @@
     "id": "neovitae:generated/guide/facts/entry_viewed_once/rituals_activation_crystals_hook",
     "trigger_target": "neovitae:rituals/activation_crystals",
     "trigger_type": "modonomicon:entry_viewed_once"
+  },
+  {
+    "fact_id": "neovitae:generated/guide/facts/entry_viewed_once/rituals_ritual_tinkerer",
+    "id": "neovitae:generated/guide/facts/entry_viewed_once/rituals_ritual_tinkerer_hook",
+    "trigger_target": "neovitae:rituals/ritual_tinkerer",
+    "trigger_type": "modonomicon:entry_viewed_once"
   }
 ]

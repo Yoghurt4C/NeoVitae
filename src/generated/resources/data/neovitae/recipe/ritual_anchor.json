@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "c": {
+      "neoforge:ingredient_type": "neovitae:orb_tier",
+      "tier": 3
+    },
+    "o": "#c:obsidians",
+    "s": "neovitae:ritual_stone",
+    "t": "neovitae:tabula_spiritus"
+  },
+  "pattern": [
+    " c ",
+    "sts",
+    "ooo"
+  ],
+  "result": {
+    "id": "neovitae:ritual_anchor"
+  }
+}
