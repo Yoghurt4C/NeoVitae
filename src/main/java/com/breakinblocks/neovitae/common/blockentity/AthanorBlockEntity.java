@@ -69,7 +69,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider {
+public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider, IRitualAccelerated {
 
     public static final int TOOL_SLOT = 0;
     public static final int INPUT_START = 1;
@@ -83,6 +83,7 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider 
     public static final int TANK_CAPACITY = 20 * FluidType.BUCKET_VOLUME;
 
     private double progress = 0;
+    private final RitualAcceleration ritualAcceleration = new RitualAcceleration();
     public static final double DEFAULT_SPEED = 0.005;
 
     private Map<SpiritusType, Double> currentRecipeSpiritusCost = Map.of();
@@ -326,7 +327,7 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider 
             inputStacks[s] = athanorTile.athanorInv.getStackInSlot(INPUT_START + s);
         }
         double rawSpiritus = WorldSpiritusHandler.getCurrentSpiritus(level, blockPos, SpiritusType.RAW);
-        double spiritusSpeedMod = 0.5 + 1.5 * Math.min(1.0, rawSpiritus / 100.0);
+        double speedMod = (0.5 + 1.5 * Math.min(1.0, rawSpiritus / 100.0)) * athanorTile.ritualAcceleration.factor(level);
         boolean didProgress = false;
         ServerLevel serverLevel = level instanceof ServerLevel sl ? sl : null;
         IAthanorTool.Readiness toolReadiness = IAthanorTool.readinessOf(toolStack);
@@ -356,7 +357,7 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider 
                 } else if (furnaceSlot >= 0) {
                     athanorTile.idleReason = IdleReason.NONE;
                     SingleRecipeInput input = new SingleRecipeInput(inputStacks[furnaceSlot]);
-                    athanorTile.progress += DEFAULT_SPEED * ((double) furnaceRecipe.value().cookingTime() / 200D) * toolStack.getOrDefault(NVDataComponents.ARC_SPEED, 1D) * spiritusSpeedMod;
+                    athanorTile.progress += DEFAULT_SPEED * ((double) furnaceRecipe.value().cookingTime() / 200D) * toolStack.getOrDefault(NVDataComponents.ARC_SPEED, 1D) * speedMod;
                     didProgress = true;
                     if (athanorTile.progress >= 1) {
                         athanorTile.craftFurnace(furnaceRecipe.value(), input, furnaceSlot, itemOutputHandler);
@@ -383,13 +384,13 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider 
                         } else {
                             athanorTile.spiritusBlocked = false;
                             athanorTile.idleReason = IdleReason.NONE;
-                            athanorTile.progress += DEFAULT_SPEED * toolStack.getOrDefault(NVDataComponents.ARC_SPEED, 1D) * spiritusSpeedMod;
+                            athanorTile.progress += DEFAULT_SPEED * toolStack.getOrDefault(NVDataComponents.ARC_SPEED, 1D) * speedMod;
                             didProgress = true;
                         }
                     } else {
                         athanorTile.spiritusBlocked = false;
                         athanorTile.idleReason = IdleReason.NONE;
-                        athanorTile.progress += DEFAULT_SPEED * toolStack.getOrDefault(NVDataComponents.ARC_SPEED, 1D) * spiritusSpeedMod;
+                        athanorTile.progress += DEFAULT_SPEED * toolStack.getOrDefault(NVDataComponents.ARC_SPEED, 1D) * speedMod;
                         didProgress = true;
                     }
 
@@ -402,7 +403,7 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider 
                         outputChanged = true;
                     }
                 } else if (toolStack.is(NVTags.Items.REVERTER)) {
-                    var dr = athanorTile.tryDisenchant(level, blockPos, inputStacks, itemOutputHandler, toolStack, toolReadiness, spiritusSpeedMod);
+                    var dr = athanorTile.tryDisenchant(level, blockPos, inputStacks, itemOutputHandler, toolStack, toolReadiness, speedMod);
                     if (dr.progressed()) didProgress = true;
                     if (dr.crafted()) outputChanged = true;
                 } else {
@@ -413,6 +414,10 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider 
         } else {
             athanorTile.currentRecipeSpiritusCost = Map.of();
             athanorTile.spiritusBlocked = false;
+        }
+
+        if (didProgress) {
+            athanorTile.ritualAcceleration.markWorked(level);
         }
 
         if (didProgress && level.getGameTime() % 6 == 0) {
@@ -565,7 +570,7 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider 
         }
     }
 
-    private DisenchantResult tryDisenchant(Level level, BlockPos pos, ItemStack[] inputStacks, AthanorOutputHandler outputHandler, ItemStack toolStack, IAthanorTool.Readiness toolReadiness, double spiritusSpeedMod) {
+    private DisenchantResult tryDisenchant(Level level, BlockPos pos, ItemStack[] inputStacks, AthanorOutputHandler outputHandler, ItemStack toolStack, IAthanorTool.Readiness toolReadiness, double speedMod) {
         int bookSlot = -1;
         int itemSlot = -1;
         int disenchantableCount = 0;
@@ -643,7 +648,7 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider 
             return DisenchantResult.NONE;
         }
         idleReason = IdleReason.NONE;
-        progress += DEFAULT_SPEED * toolStack.getOrDefault(NVDataComponents.ARC_SPEED, 1D) * spiritusSpeedMod;
+        progress += DEFAULT_SPEED * toolStack.getOrDefault(NVDataComponents.ARC_SPEED, 1D) * speedMod;
         if (progress < 1) {
             return new DisenchantResult(true, false);
         }
@@ -801,5 +806,10 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider 
     @Override
     public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(worldPosition);
+    }
+
+    @Override
+    public RitualAcceleration getRitualAcceleration() {
+        return ritualAcceleration;
     }
 }

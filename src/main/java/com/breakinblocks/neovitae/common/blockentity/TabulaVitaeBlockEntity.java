@@ -58,7 +58,7 @@ import java.util.Optional;
 import java.util.Collections;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
-public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvider, SideConfigurable, OutputFaceConfigurable {
+public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvider, SideConfigurable, OutputFaceConfigurable, IRitualAccelerated {
     public enum IdleReason {
         NONE, NO_RECIPE, NO_ORB, ORB_UNBOUND, TIER_TOO_LOW, NOT_ENOUGH_EV, OUTPUT_BLOCKED, NO_NETWORK, CUTTING_FLUID_UNBOUND;
 
@@ -90,6 +90,7 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
     public boolean isSlave = false;
     public int burnTime = 0;
     public int ticksRequired = 1;
+    private final RitualAcceleration ritualAcceleration = new RitualAcceleration();
     public BlockPos connectedPos = BlockPos.ZERO;
     public int activeSlot = -1;
 
@@ -292,7 +293,8 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
                 return;
             }
 
-            if (!syphonEV(orbStack, flaskRecipe.getSyphon(), flaskRecipe.getTicks())) {
+            int flaskStep = ritualAcceleration.factor(level);
+            if (!syphonEV(orbStack, flaskRecipe.getSyphon(), flaskRecipe.getTicks(), flaskStep)) {
                 return;
             }
             idleReason = IdleReason.NONE;
@@ -300,9 +302,10 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
             if (burnTime == 0) {
                 level.playSound(null, worldPosition, NVSounds.TABULA_VITAE_ACTIVATE.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
             }
-            burnTime++;
+            burnTime += flaskStep;
+            ritualAcceleration.markWorked(level);
 
-            if (burnTime % 5 == 0) {
+            if (level.getGameTime() % 5 == 0) {
                 ((ServerLevel) level).sendParticles(new ColoredParticleOptions(NVParticles.BLOOD_FLAME.get(), 0xAA0000), worldPosition.getX() + 0.5, worldPosition.getY() + 1.1, worldPosition.getZ() + 0.5, 2, 0.2, 0.0, 0.2, 0.01);
             }
 
@@ -347,7 +350,8 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
             return;
         }
 
-        if (!syphonEV(orbStack, recipe.getSyphon(), recipe.getTicks())) {
+        int step = ritualAcceleration.factor(level);
+        if (!syphonEV(orbStack, recipe.getSyphon(), recipe.getTicks(), step)) {
             return;
         }
         idleReason = IdleReason.NONE;
@@ -355,9 +359,10 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
         if (burnTime == 0) {
             level.playSound(null, worldPosition, NVSounds.TABULA_VITAE_ACTIVATE.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
         }
-        burnTime++;
+        burnTime += step;
+        ritualAcceleration.markWorked(level);
 
-        if (burnTime % 5 == 0) {
+        if (level.getGameTime() % 5 == 0) {
             ((ServerLevel) level).sendParticles(new ColoredParticleOptions(NVParticles.BLOOD_FLAME.get(), 0xAA0000), worldPosition.getX() + 0.5, worldPosition.getY() + 1.1, worldPosition.getZ() + 0.5, 2, 0.2, 0.0, 0.2, 0.01);
         }
 
@@ -386,7 +391,7 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
         }
     }
 
-    private boolean syphonEV(ItemStack orbStack, int totalSyphon, int totalTicks) {
+    private boolean syphonEV(ItemStack orbStack, int totalSyphon, int totalTicks, int step) {
         if (totalSyphon <= 0) return true;
         if (!(orbStack.getItem() instanceof BloodOrbItem)) {
             idleReason = IdleReason.NO_ORB;
@@ -407,8 +412,9 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
 
         int ticks = Math.max(1, totalTicks);
         int elapsed = Math.min(Math.max(burnTime, 0), ticks - 1);
+        int reached = Math.min(elapsed + Math.max(1, step), ticks);
         long drained = (long) totalSyphon * elapsed / ticks;
-        int syphonThisTick = (int) ((long) totalSyphon * (elapsed + 1) / ticks - drained);
+        int syphonThisTick = (int) ((long) totalSyphon * reached / ticks - drained);
         if (syphonThisTick <= 0) return true;
 
         if (network.getCurrentEV() < syphonThisTick) {
@@ -706,5 +712,10 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
     @Override
     public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(worldPosition);
+    }
+
+    @Override
+    public RitualAcceleration getRitualAcceleration() {
+        return ritualAcceleration;
     }
 }

@@ -1543,6 +1543,8 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         addRitual("deus_placer", "Deus Mason", "A Deus Mason: lays eight times as many blocks each pulse across four times the volume and twice the reach.");
         add("ritual.neovitae.deus_placer.placerRange.info", "The area the Mason fills.");
         add("ritual.neovitae.deus_placer.spiritus.raw", "Raw Spiritus quickens the work and widens the domain: 20 raw for 32 blocks a pulse and 80,000 blocks of room, 50 raw for 64 and 320,000.");
+        addRitual("deus_celerity", "Deus Celerity", "A Deus Celerity: speeds up every Athanor, Hellfire Forge, Tabula Vitae and Sanguine Crafter in a 27-wide area tenfold.");
+        add("ritual.neovitae.deus_celerity.accelerateRange.info", "The area whose machines are sped up.");
         addRitual("deus_felling", "Deus Fallen Trees", "A Deus Fallen Trees: fells up to 512 blocks each operation across a 41-wide area and replants from its drops or the chest.");
         addRitual("deus_armour_evolve", "Deus Sentient Evolution", "A Deus Sentient Evolution: stand on the master stone in Sentient Armor that holds 500 Upgrade Points to raise its capacity to 600 and bind Blood Mending into every worn piece.");
         addRitual("deus_meteor", "Deus Meteo", "A Deus Meteo: calls the same meteors as the Ritual of Meteo, but each layer keeps only its ores and other valuable blocks, with no filler stone. A layer with nothing valuable falls as it would from the Ritual of Meteo.");
@@ -1552,6 +1554,8 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         addRitual("sphere", "Dawn of the New Moon", "Scoops the ellipsoidal volume of terrain below the master stone and lifts it upward into a floating moon. Foundation block beneath the master sets the size: iron 41, gold 49, diamond 57, netherite 65 across, anything else 33. 10 EV per block moved; ~100 checks per refresh.");
         addRitual("armour_evolve", "Ritual of Sentient Evolution", "Stand on the master stone in Sentient Armor; each activation adds 100 Upgrade Points of capacity, up to a maximum of 500.");
         addRitual("upgrade_remove", "Tabula Rasa", "Wipes every upgrade from worn Sentient Armor and resets used points to zero; no tomes are produced.");
+        addRitual("celerity", "Ritual of Celerity", "Doubles the working speed of every Athanor, Hellfire Forge, Tabula Vitae and Sanguine Crafter in range. Each machine still costs what it always does per craft; the ritual draws its EV for every machine that is working.");
+        add("ritual.neovitae.celerity.accelerateRange.info", "The area whose machines are sped up.");
         addRitual("enchanted_vitae", "Ritual of Enchanted Vitae", "Throw one item and any number of enchanted books onto the master stone; the ritual reads the books and binds every enchantment the item can take, at whatever level the book carries, charging Essentia Vitae for each level. Two enchantments that cannot share an item halt the rite; remove one and offer the item again to resume. The books survive.");
         add("ritual.neovitae.enchanted_vitae.insufficient", "The rite stalls: %s Essentia Vitae is needed to bind these enchantments.");
         add("ritual.neovitae.enchanted_vitae.conflict", "The rite refuses %s alongside %s. Take one of the marked books off the stone, then offer the item again to resume.");

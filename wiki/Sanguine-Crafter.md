@@ -55,7 +55,7 @@ One aspect shard powers **8 crafts**. The gem in the gem slot refills from the c
 | Hellforged Sanguine Casing | +1 craft at a time, up to 16 |
 | Swift Sanguine Casing | +25% crafting speed |
 
-At the default base speed of 5x, a crafting table recipe takes 4 ticks, a Hellfire Forge recipe 20 ticks, and a Tabula Vitae recipe a fifth of its own crafting time. Swift casings speed it up from there.
+At the default base speed of 5x, a crafting table recipe takes 4 ticks, a Hellfire Forge recipe 20 ticks, and a Tabula Vitae recipe a fifth of its own crafting time. Swift casings speed it up from there, and a **[Ritual of Celerity](Rituals#automation-and-resources)** nearby doubles the result (ten times with Deus Celerity). When a craft takes less than a tick, the crafter finishes several in the same tick.
 
 ## Automation
 

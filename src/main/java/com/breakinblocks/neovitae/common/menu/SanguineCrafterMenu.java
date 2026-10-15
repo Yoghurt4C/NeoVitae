@@ -41,7 +41,7 @@ public class SanguineCrafterMenu extends AbstractBlockEntityMenu<SanguineCrafter
                     case DATA_PROGRESS -> tile.getCraftTime() <= 0 ? 0 : tile.getProgress() * 1000 / tile.getCraftTime();
                     case DATA_CHUNK_LOADING -> tile.getChunkLoading().ordinal();
                     case DATA_PARALLEL -> tile.getParallel();
-                    case DATA_SPEED -> (int) Math.round(tile.getSpeedMultiplier() * 100);
+                    case DATA_SPEED -> (int) Math.round(tile.getEffectiveSpeedMultiplier() * 100);
                     case DATA_RUINA_CHARGE -> tile.getRuinaCharge();
                     case DATA_INVICTUS_CHARGE -> tile.getInvictusCharge();
                     default -> 0;

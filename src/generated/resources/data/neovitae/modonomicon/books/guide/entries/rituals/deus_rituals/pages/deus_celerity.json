@@ -1,0 +1,12 @@
+{
+  "type": "modonomicon:multiblock",
+  "condition": {
+    "type": "modonomicon:none"
+  },
+  "id": "deus_celerity",
+  "multiblock_id": "neovitae:ritual/deus_celerity",
+  "multiblock_name": "Deus Celerity",
+  "show_visualize_button": true,
+  "sort_number": 15,
+  "text": "book.neovitae.guide.rituals.deus_rituals.deus_celerity.text"
+}

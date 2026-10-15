@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuProvider, SideConfigurable, OutputFaceConfigurable {
+public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuProvider, SideConfigurable, OutputFaceConfigurable, IRitualAccelerated {
     public final Inv inv = new Inv();
 
     public class Inv extends ItemStacksResourceHandler {
@@ -114,6 +114,7 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
     public static final int STATUS_NEEDS_SPIRITUS = 2;
 
     protected int progress = 0;
+    private final RitualAcceleration ritualAcceleration = new RitualAcceleration();
     protected int status = STATUS_IDLE;
     protected int requiredSpiritus = 0;
     protected int storedSpiritus = 0;
@@ -213,9 +214,10 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
         if (tile.progress == 0) {
             level.playSound(null, pos, NVSounds.HELLFIRE_FORGE_CRAFT.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
         }
-        tile.progress++;
+        tile.progress += tile.ritualAcceleration.factor(level);
+        tile.ritualAcceleration.markWorked(level);
         if (tile.progress < MAX_PROGRESS) {
-            if (tile.progress % 4 == 0) {
+            if (level.getGameTime() % 4 == 0) {
                 ((ServerLevel) level).sendParticles(new ColoredParticleOptions(NVParticles.BLOOD_FLAME.get(), 0xFF4400), pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 2, 0.1, 0, 0.1, 0.02);
             }
             return;
@@ -413,5 +415,10 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
     @Override
     public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(worldPosition);
+    }
+
+    @Override
+    public RitualAcceleration getRitualAcceleration() {
+        return ritualAcceleration;
     }
 }

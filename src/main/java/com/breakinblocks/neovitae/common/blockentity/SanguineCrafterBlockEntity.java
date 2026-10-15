@@ -67,7 +67,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SanguineCrafterBlockEntity extends BaseBlockEntity implements MenuProvider, SideConfigurable, OutputFaceConfigurable {
+public class SanguineCrafterBlockEntity extends BaseBlockEntity implements MenuProvider, SideConfigurable, OutputFaceConfigurable, IRitualAccelerated {
 
     public enum Mode {
         AUTO, CRAFTING, TABULA, FORGE;
@@ -170,6 +170,7 @@ public class SanguineCrafterBlockEntity extends BaseBlockEntity implements MenuP
     private int hellforgedCasings = 0;
     private int swiftCasings = 0;
     private int progress = 0;
+    private final RitualAcceleration ritualAcceleration = new RitualAcceleration();
     private int craftTime = 0;
     private int ruinaCharge = 0;
     private int invictusCharge = 0;
@@ -296,8 +297,9 @@ public class SanguineCrafterBlockEntity extends BaseBlockEntity implements MenuP
             status = Status.CRAFTING;
         }
 
-        progress++;
-        if (progress % 5 == 0) {
+        progress += ritualAcceleration.factor(level);
+        ritualAcceleration.markWorked(level);
+        if (level.getGameTime() % 5 == 0) {
             BlockPos center = getCenter();
             level.sendParticles(new ColoredParticleOptions(NVParticles.BLOOD_FLAME.get(), 0xAA0000),
                     center.getX() + 0.5, center.getY() + 1.1, center.getZ() + 0.5, 2, 0.25, 0.05, 0.25, 0.01);
@@ -307,9 +309,10 @@ public class SanguineCrafterBlockEntity extends BaseBlockEntity implements MenuP
             return;
         }
 
+        int rounds = Math.max(1, progress / Math.max(1, craftTime));
         progress = 0;
         int crafted = 0;
-        int parallel = getParallel();
+        int parallel = getParallel() * rounds;
         for (int i = 0; i < parallel; i++) {
             Plan plan = plan(level);
             if (plan == null) break;
@@ -434,6 +437,15 @@ public class SanguineCrafterBlockEntity extends BaseBlockEntity implements MenuP
     public double getSpeedMultiplier() {
         return NeoVitae.SERVER_CONFIG.SANGUINE_CRAFTER_BASE_SPEED.get()
                 * (1.0 + swiftCasings * NeoVitae.SERVER_CONFIG.SANGUINE_CRAFTER_SPEED_PER_SWIFT_CASING.get());
+    }
+
+    public double getEffectiveSpeedMultiplier() {
+        return getSpeedMultiplier() * ritualAcceleration.factor(level);
+    }
+
+    @Override
+    public RitualAcceleration getRitualAcceleration() {
+        return ritualAcceleration;
     }
 
     private int scaledTicks(int baseTicks) {
