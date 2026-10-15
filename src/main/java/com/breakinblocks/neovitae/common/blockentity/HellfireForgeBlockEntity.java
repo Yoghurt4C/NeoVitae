@@ -19,7 +19,6 @@ import com.breakinblocks.neovitae.util.helper.BlockEntityHelper;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.transfer.RangedResourceHandler;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
@@ -35,6 +34,9 @@ import com.breakinblocks.neovitae.common.particle.NVParticles;
 import com.breakinblocks.neovitae.common.recipe.NVRecipes;
 import com.breakinblocks.neovitae.common.recipe.forge.ForgeInput;
 import com.breakinblocks.neovitae.common.recipe.forge.ForgeRecipe;
+import com.breakinblocks.neovitae.common.sideconfig.SideConfigResourceHandler;
+import com.breakinblocks.neovitae.common.sideconfig.SideConfigurable;
+import com.breakinblocks.neovitae.common.sideconfig.SlotSideConfig;
 import com.breakinblocks.neovitae.common.tag.NVTags;
 import com.breakinblocks.neovitae.spiritus.SpiritusHelper;
 import com.breakinblocks.neovitae.spiritus.WorldSpiritusHandler;
@@ -44,11 +46,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuProvider {
+public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuProvider, SideConfigurable {
     public final Inv inv = new Inv();
 
     public class Inv extends ItemStacksResourceHandler {
-        Inv() { super(6); }
+        Inv() { super(SLOT_COUNT); }
 
         @Override
         public boolean isValid(int index, ItemResource resource) {
@@ -80,6 +82,19 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
 
     public static final int GEM_SLOT = 4;
     public static final int OUTPUT_SLOT = 5;
+    public static final int SLOT_COUNT = 6;
+
+    private static final boolean[][] DEFAULT_SIDE_CONFIG = new boolean[][] {
+            { false, false, false, true, false, false },
+            { false, false, false, false, true, false },
+            { false, false, true, false, false, false },
+            { false, false, false, false, false, true },
+            { false, true, false, false, false, false },
+            { true, false, false, false, false, false }
+    };
+
+    private final SlotSideConfig sideConfig = new SlotSideConfig(SLOT_COUNT, DEFAULT_SIDE_CONFIG);
+    public int activeSlot = -1;
 
     public static final int MAX_PROGRESS = 100;
 
@@ -322,6 +337,7 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
         super.loadAdditional(tag);
         tag.child("inventory").ifPresent(inv::deserialize);
         progress = tag.getIntOr("progress", 0);
+        sideConfig.load(tag);
     }
 
     @Override
@@ -329,17 +345,19 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
         super.saveAdditional(tag);
         inv.serialize(tag.child("inventory"));
         tag.putInt("progress", progress);
+        sideConfig.save(tag);
+    }
+
+    @Override
+    public SlotSideConfig getSideConfig() {
+        return sideConfig;
     }
 
     public @Nullable ResourceHandler<ItemResource> getInventory(@Nullable Direction side) {
         if (side == null) {
             return inv;
         }
-        return switch (side) {
-            case UP -> RangedResourceHandler.ofSingleIndex(inv, GEM_SLOT);
-            case DOWN -> RangedResourceHandler.ofSingleIndex(inv, OUTPUT_SLOT);
-            default -> RangedResourceHandler.ofSingleIndex(inv, side.get2DDataValue());
-        };
+        return new SideConfigResourceHandler<>(inv, sideConfig, side);
     }
 
     @Override

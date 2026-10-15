@@ -2,31 +2,141 @@ package com.breakinblocks.neovitae.client.screen;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import com.breakinblocks.neovitae.NeoVitae;
+import com.breakinblocks.neovitae.client.widgets.SideToggleButton;
 import com.breakinblocks.neovitae.common.blockentity.HellfireForgeBlockEntity;
 import com.breakinblocks.neovitae.common.menu.HellfireForgeMenu;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import com.breakinblocks.neovitae.common.network.SetSideConfigPayload;
+import com.breakinblocks.neovitae.common.sideconfig.SlotSideConfig;
 import com.breakinblocks.neovitae.compat.jei.NeoVitaeJEIPlugin;
 import com.breakinblocks.neovitae.compat.jei.forge.HellfireForgeRecipeCategory;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class HellfireForgeScreen extends AbstractContainerScreen<HellfireForgeMenu> {
     private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(NeoVitae.MODID, "textures/gui/hellfire_forge.png");
     private static final int BLOCKED_OVERLAY = 0x55FF3030;
     private static final int BLOCKED_BORDER = 0xAAFF3030;
+    private static final int PROGRESS_X = 106;
+    private static final int PROGRESS_Y = 14;
+
+    private final Map<Direction, SideToggleButton> sideButtons = new EnumMap<>(Direction.class);
 
     public HellfireForgeScreen(HellfireForgeMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title, 176, 205);
         this.titleLabelX = 38;
         this.inventoryLabelY = 111;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        sideButtons.clear();
+
+        int left = (this.width - this.imageWidth) / 2;
+        int top = (this.height - this.imageHeight) / 2;
+
+        addSideButton(left + 133, top + 50, Direction.DOWN, "D");
+        addSideButton(left + 151, top + 50, Direction.UP, "U");
+        addSideButton(left + 133, top + 68, Direction.NORTH, "N");
+        addSideButton(left + 151, top + 68, Direction.SOUTH, "S");
+        addSideButton(left + 133, top + 86, Direction.WEST, "W");
+        addSideButton(left + 151, top + 86, Direction.EAST, "E");
+
+        refreshSideButtons();
+    }
+
+    private void addSideButton(int x, int y, Direction direction, String label) {
+        SideToggleButton button = new SideToggleButton(
+                x, y, direction, Component.literal(label),
+                () -> sideAllowed(direction),
+                btn -> onDirectionButton(direction));
+        button.visible = false;
+        sideButtons.put(direction, button);
+        this.addRenderableWidget(button);
+    }
+
+    private boolean sideAllowed(Direction direction) {
+        int slot = menu.tile.activeSlot;
+        return slot >= 0 && menu.tile.getSideConfig().isAllowed(slot, direction);
+    }
+
+    private void onDirectionButton(Direction direction) {
+        HellfireForgeBlockEntity tile = menu.tile;
+        int slot = tile.activeSlot;
+        if (slot < 0) return;
+        SlotSideConfig config = tile.getSideConfig();
+        boolean newState = !config.isAllowed(slot, direction);
+        config.setAllowed(slot, direction, newState);
+        ClientPacketDistributor.sendToServer(new SetSideConfigPayload(tile.getBlockPos(), slot, direction.get3DDataValue(), newState));
+        refreshSideButtonTooltips();
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        refreshSideButtons();
+    }
+
+    private void refreshSideButtons() {
+        boolean active = menu.tile.activeSlot >= 0;
+        for (SideToggleButton button : sideButtons.values()) {
+            button.visible = active;
+        }
+        if (active) refreshSideButtonTooltips();
+    }
+
+    private void refreshSideButtonTooltips() {
+        int slot = menu.tile.activeSlot;
+        if (slot < 0) return;
+        Component slotName = slotName(slot);
+        for (Map.Entry<Direction, SideToggleButton> entry : sideButtons.entrySet()) {
+            Direction dir = entry.getKey();
+            boolean allowed = menu.tile.getSideConfig().isAllowed(slot, dir);
+            MutableComponent header = Component.translatable(
+                    "gui.neovitae.tabula_vitae.side_button",
+                    Component.translatable("gui.neovitae.side." + dir.getName()).withStyle(ChatFormatting.WHITE),
+                    slotName);
+            Component state = allowed
+                    ? Component.translatable("gui.neovitae.tabula_vitae.side_allowed").withStyle(ChatFormatting.GREEN)
+                    : Component.translatable("gui.neovitae.tabula_vitae.side_blocked").withStyle(ChatFormatting.RED);
+            Component hint = Component.translatable("gui.neovitae.tabula_vitae.side_hint").withStyle(ChatFormatting.GRAY);
+            entry.getValue().setTooltip(Tooltip.create(joinLines(header, state, hint)));
+        }
+    }
+
+    private static Component joinLines(Component... lines) {
+        MutableComponent root = Component.empty();
+        for (int i = 0; i < lines.length; i++) {
+            if (i > 0) root.append("\n");
+            root.append(lines[i]);
+        }
+        return root;
+    }
+
+    private static Component slotName(int slot) {
+        return switch (slot) {
+            case HellfireForgeBlockEntity.GEM_SLOT ->
+                    Component.translatable("gui.neovitae.hellfire_forge.slot.gem").withStyle(ChatFormatting.YELLOW);
+            case HellfireForgeBlockEntity.OUTPUT_SLOT ->
+                    Component.translatable("gui.neovitae.tabula_vitae.slot.output").withStyle(ChatFormatting.YELLOW);
+            default -> Component.translatable("gui.neovitae.tabula_vitae.slot.input", slot + 1).withStyle(ChatFormatting.YELLOW);
+        };
     }
 
     @Override
@@ -42,7 +152,23 @@ public class HellfireForgeScreen extends AbstractContainerScreen<HellfireForgeMe
             }
             lines.add(Component.translatable("gui.neovitae.show_recipes").withStyle(ChatFormatting.YELLOW));
             guiGraphics.setTooltipForNextFrame(this.font, lines, Optional.empty(), mouseX, mouseY);
+            return;
         }
+        if (isOverActiveSlot(mouseX, mouseY)) {
+            List<Component> lines = new ArrayList<>();
+            lines.add(Component.translatable("gui.neovitae.tabula_vitae.active_slot", slotName(menu.tile.activeSlot)).withStyle(ChatFormatting.WHITE));
+            lines.add(Component.translatable("gui.neovitae.tabula_vitae.active_hint").withStyle(ChatFormatting.GRAY));
+            guiGraphics.setTooltipForNextFrame(this.font, lines, Optional.empty(), mouseX, mouseY);
+        }
+    }
+
+    private boolean isOverActiveSlot(double mouseX, double mouseY) {
+        int slot = menu.tile.activeSlot;
+        if (slot < 0) return false;
+        Slot s = this.getMenu().getSlot(slot);
+        int x = leftPos + s.x;
+        int y = topPos + s.y;
+        return mouseX >= x && mouseX < x + 16 && mouseY >= y && mouseY < y + 16;
     }
 
     private boolean isBlockedOnSpiritus() {
@@ -62,22 +188,29 @@ public class HellfireForgeScreen extends AbstractContainerScreen<HellfireForgeMe
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, i, j, 0f, 0f, this.imageWidth, this.imageHeight, 256, 256);
 
         int progress = getCookProgressScaled(90);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, i + 115, j + 14 + 90 - progress, 176f, (float)(90 - progress), 18, progress, 256, 256);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, i + PROGRESS_X, j + PROGRESS_Y + 90 - progress, 176f, (float)(90 - progress), 18, progress, 256, 256);
 
         if (isBlockedOnSpiritus()) {
-            int x = i + 115;
-            int y = j + 14;
+            int x = i + PROGRESS_X;
+            int y = j + PROGRESS_Y;
             guiGraphics.fill(x, y, x + 18, y + 90, BLOCKED_OVERLAY);
             guiGraphics.fill(x, y, x + 18, y + 1, BLOCKED_BORDER);
             guiGraphics.fill(x, y + 89, x + 18, y + 90, BLOCKED_BORDER);
             guiGraphics.fill(x, y, x + 1, y + 90, BLOCKED_BORDER);
             guiGraphics.fill(x + 17, y, x + 18, y + 90, BLOCKED_BORDER);
         }
+
+        int activeSlot = menu.tile.activeSlot;
+        if (activeSlot != -1) {
+            Slot slot = this.getMenu().getSlot(activeSlot);
+            float highlightV = (activeSlot == HellfireForgeBlockEntity.OUTPUT_SLOT) ? 37f : 19f;
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, i + slot.x, j + slot.y, 195f, highlightV, 16, 16, 256, 256);
+        }
     }
 
     private boolean isOverProgress(double mouseX, double mouseY) {
-        int px = leftPos + 115;
-        int py = topPos + 14;
+        int px = leftPos + PROGRESS_X;
+        int py = topPos + PROGRESS_Y;
         return mouseX >= px && mouseX < px + 18 && mouseY >= py && mouseY < py + 90;
     }
 

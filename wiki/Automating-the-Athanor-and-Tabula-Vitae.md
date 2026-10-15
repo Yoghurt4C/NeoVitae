@@ -28,6 +28,8 @@ Automate it to mass-produce:
 - **Cutting Fluids** for the Athanor's ore chain.
 - **Tabula** slates (Rasa, Robur, Animata, and up) for downstream crafting.
 
+The **[Hellfire Forge](Hellfire-Forge-and-Sentient-Equipment)** uses the same per-side slot configuration, gem slot included. Keep each ingredient on its own side so the forge receives one of each, and let the gem refill from the chunk's Aura or swap gems in through its configured face.
+
 ## Tying them together
 
 Run the Tabula Vitae's Cutting Fluid output straight into an Athanor's input side, feed ore from a separate store, and pull ingots from the bottom. With the chunk's Raw Spiritus kept topped up, the line refines ore hands-off. Cross-reference **[Routing Network](Routing-Network)** for node setup and **[Automating the Ara Vitae](Automating-the-Ara-Vitae)** for altar-side automation.

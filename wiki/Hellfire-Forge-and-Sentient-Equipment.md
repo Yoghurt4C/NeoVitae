@@ -6,6 +6,10 @@ The **Hellfire Forge** stands as a second pillar of the art, twin to the **[Ara 
 
 Crafting in the Forge spends the Spiritus stored in the **Spiritus Gem** placed in its gem slot. To keep that reserve from running dry, a gem seated in the Forge continuously absorbs Spiritus from the chunk's **[Aura](Spiritus-Aspects-and-Crystals)**, at the same rate a **Spiritus Crucible** fills a gem (10 per tick per Aspect). Saturate the local Aura with a **Crystallum Fractura** farm and the Forge can run unattended, its gem refilling as fast as crafting drains it.
 
+## Side Configuration
+
+Each slot on the Hellfire Forge, the gem slot included, can be exposed to any side of the block for hopper or pipe access. Click an empty slot in the menu and then click the direction buttons that appear; green sides deliver to (or pull from) that slot, red sides are blocked. Out of the box each of the four ingredient slots faces its own horizontal side: top left is south, top right is west, bottom left is north and bottom right is east. The gem slot takes items from the top, and the output slot gives them from the bottom.
+
 ## Harvesting Spiritus
 
 Before you can put the forge to use, you must collect Spiritus, the residual spiritus scoured from slain creatures. Two paths open the door.

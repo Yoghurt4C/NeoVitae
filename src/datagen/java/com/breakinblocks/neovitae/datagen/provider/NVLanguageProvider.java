@@ -1762,6 +1762,7 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         add("gui.neovitae.routing.match_components", "Match Components:");
         add("gui.neovitae.hellfire_forge.needs_spiritus", "Not enough Spiritus: %s / %s");
         add("gui.neovitae.hellfire_forge.needs_spiritus.hint", "Put a charged Spiritus Gem in the gem slot to fuel the craft");
+        add("gui.neovitae.hellfire_forge.slot.gem", "Gem slot");
         add("gui.neovitae.routing.matching_components", "Matching components:");
         add("gui.neovitae.routing.shift_match", "Shift-Right-Click: match components");
         add("gui.neovitae.routing.page", "Filter Page %s of %s");
