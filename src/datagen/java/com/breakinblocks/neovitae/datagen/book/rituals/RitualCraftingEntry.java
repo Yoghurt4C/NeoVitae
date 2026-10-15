@@ -67,6 +67,16 @@ public class RitualCraftingEntry extends EntryProvider {
                 + "falling back to vanilla crafting if none match.\\\n\\\n"
                 + "[#](2E8B57)Only one recipe is attempted per ritual pulse; queue as much raw material as "
                 + "you like and the ritual will work its way through the stack.[#]()");
+
+        this.page("forge_fuel", () -> BookTextPageModel.create()
+                .withTitle(this.context().pageTitle())
+                .withText(this.context().pageText()));
+        this.pageTitle("Fueling the Forge");
+        this.pageText("A [#](8B0000)Hellfire Forge[#]() recipe draws its Spiritus from a [#](8B0000)Spiritus Gem[#]() "
+                + "in the [#](8B0000)fifth slot[#]() of the input container, just as the forge draws from its gem slot. "
+                + "The gem must hold the recipe's minimum, the recipe drains it by the usual amount, and recipes bound "
+                + "to an aspect need a gem of that aspect.\\\n\\\n"
+                + "Place the four ingredients in the first four slots. Recipes that need no Spiritus craft without a gem.");
     }
 
     @Override

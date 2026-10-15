@@ -20,16 +20,21 @@ import net.neoforged.neoforge.transfer.item.ItemResource;
 import com.breakinblocks.neovitae.NeoVitae;
 import com.breakinblocks.neovitae.api.ritual.AreaDescriptor;
 import com.breakinblocks.neovitae.api.stream.StreamPresets;
+import com.breakinblocks.neovitae.common.blockentity.HellfireForgeBlockEntity;
+import com.breakinblocks.neovitae.common.datacomponent.NVDataComponents;
 import com.breakinblocks.neovitae.common.datacomponent.SpiritusType;
+import com.breakinblocks.neovitae.common.item.NVItems;
 import com.breakinblocks.neovitae.common.recipe.NVRecipes;
 import com.breakinblocks.neovitae.common.recipe.tabulavitae.TabulaVitaeInput;
 import com.breakinblocks.neovitae.common.recipe.tabulavitae.TabulaVitaeRecipe;
 import com.breakinblocks.neovitae.common.recipe.forge.ForgeInput;
 import com.breakinblocks.neovitae.common.recipe.forge.ForgeRecipe;
+import com.breakinblocks.neovitae.common.tag.NVTags;
 import com.breakinblocks.neovitae.ritual.*;
 import com.breakinblocks.neovitae.ritual.RitualHelper.RitualContext;
 import com.breakinblocks.neovitae.api.spiritus.SpiritusState;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,6 +61,9 @@ public class RitualCrafting extends Ritual {
 
     private static final double MIN_STEADFAST = 20.0;
     private static final double MIN_CORROSIVE = 20.0;
+
+    private static final int FORGE_INPUTS = 4;
+    private static final int FORGE_GEM_SLOT = 4;
 
     private static final double WILL_PER_FORGE_CRAFT = 2.0;
     private static final double WILL_PER_ALCHEMY_CRAFT = 2.0;
@@ -101,12 +109,16 @@ public class RitualCrafting extends Ritual {
 
         // --- STEADFAST: Try Soul Forge recipes first ---
         if (tryHellfireForge) {
-            ItemStack result = tryHellfireForgeRecipe(ctx, inputHandler, inputItems);
-            if (!result.isEmpty()) {
+            ForgeCraft craft = tryHellfireForgeRecipe(ctx, inputItems);
+            if (craft != null) {
+                ItemStack result = craft.result();
                 ItemStack insertResult = Utils.insertItemStacked(outputHandler, result.copy(), true);
                 if (insertResult.isEmpty()) {
                     consumeInputs(ctx, inputHandler, outputHandler, outputPos, inputItems,
-                            itemRemainders(inputItems, 4), 4);
+                            itemRemainders(inputItems, FORGE_INPUTS), FORGE_INPUTS);
+                    if (craft.input().getGemIndex() == HellfireForgeBlockEntity.GEM_SLOT) {
+                        drainFuelGem(ctx, inputHandler, outputPos, craft.recipe().usedSpiritus);
+                    }
                     Utils.insertItemStacked(outputHandler, result, false);
                     will.use(SpiritusType.INVICTUS, WILL_PER_FORGE_CRAFT);
                     will.drain(ctx.level(), masterPos);
@@ -214,29 +226,54 @@ public class RitualCrafting extends Ritual {
         }
     }
 
-    private ItemStack tryHellfireForgeRecipe(RitualContext ctx, ResourceHandler<ItemResource> inputHandler, List<ItemStack> inputItems) {
+    private record ForgeCraft(ForgeRecipe recipe, ForgeInput input, ItemStack result) {}
+
+    @Nullable
+    private ForgeCraft tryHellfireForgeRecipe(RitualContext ctx, List<ItemStack> inputItems) {
         List<ItemStack> forgeItems = new ArrayList<>();
-        for (int i = 0; i < Math.min(4, inputItems.size()); i++) {
-            if (!inputItems.get(i).isEmpty()) {
-                forgeItems.add(inputItems.get(i).copy());
+        ItemStack craftingGem = ItemStack.EMPTY;
+        int craftingGemIndex = -1;
+        for (int i = 0; i < Math.min(FORGE_INPUTS, inputItems.size()); i++) {
+            ItemStack stack = inputItems.get(i);
+            forgeItems.add(stack);
+            if (stack.is(NVTags.Items.SPIRITUS_GEM)) {
+                craftingGem = stack;
+                craftingGemIndex = i;
             }
         }
+        if (forgeItems.stream().allMatch(ItemStack::isEmpty)) return null;
 
-        if (forgeItems.isEmpty()) return ItemStack.EMPTY;
-
-        // Use empty gem stack (ritual doesn't have a gem slot)
-        ForgeInput forgeInput = new ForgeInput(forgeItems, ItemStack.EMPTY, -1);
-
-        Optional<ForgeRecipe> recipeOpt = ctx.serverLevel().recipeAccess()
-                .getRecipeFor(NVRecipes.HELLFIRE_FORGE_TYPE.get(), forgeInput, ctx.serverLevel())
-                .map(holder -> holder.value());
-
-        if (recipeOpt.isPresent()) {
-            ForgeRecipe recipe = recipeOpt.get();
-            return recipe.assemble(forgeInput);
+        ItemStack fuelGem = inputItems.size() > FORGE_GEM_SLOT ? inputItems.get(FORGE_GEM_SLOT) : ItemStack.EMPTY;
+        if (!fuelGem.has(NVDataComponents.SPIRITUS_AMOUNT)) {
+            fuelGem = ItemStack.EMPTY;
         }
 
-        return ItemStack.EMPTY;
+        ForgeCraft craft = assembleForge(ctx, new ForgeInput(forgeItems, fuelGem, HellfireForgeBlockEntity.GEM_SLOT));
+        if (craft == null && craftingGemIndex >= 0) {
+            craft = assembleForge(ctx, new ForgeInput(forgeItems, craftingGem, craftingGemIndex));
+        }
+        return craft;
+    }
+
+    @Nullable
+    private ForgeCraft assembleForge(RitualContext ctx, ForgeInput input) {
+        Optional<ForgeRecipe> recipeOpt = ctx.serverLevel().recipeAccess()
+                .getRecipeFor(NVRecipes.HELLFIRE_FORGE_TYPE.get(), input, ctx.serverLevel())
+                .map(holder -> holder.value());
+        if (recipeOpt.isEmpty() || !recipeOpt.get().hasEnoughSpiritus(input)) return null;
+        ItemStack result = recipeOpt.get().assemble(input);
+        return result.isEmpty() ? null : new ForgeCraft(recipeOpt.get(), input, result);
+    }
+
+    private void drainFuelGem(RitualContext ctx, ResourceHandler<ItemResource> inputHandler, BlockPos outputPos, double used) {
+        if (used <= 0) return;
+        ItemStack gem = Utils.extractItem(inputHandler, FORGE_GEM_SLOT, Integer.MAX_VALUE, false);
+        if (gem.isEmpty()) return;
+        double remaining = gem.getOrDefault(NVDataComponents.SPIRITUS_AMOUNT, 0D) - used;
+        if (remaining <= 0 && gem.is(NVItems.RAW_SPIRITUS)) return;
+        gem.set(NVDataComponents.SPIRITUS_AMOUNT, Math.max(0, remaining));
+        ItemStack leftover = Utils.insertItemIntoSlot(inputHandler, FORGE_GEM_SLOT, gem);
+        if (!leftover.isEmpty()) Utils.spawnStackAtBlock(ctx.level(), outputPos, Direction.UP, leftover);
     }
 
     // Tries to find and assemble a Tabula Vitae recipe from the input items.

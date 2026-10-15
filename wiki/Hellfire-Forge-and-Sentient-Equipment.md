@@ -10,6 +10,8 @@ Crafting in the Forge spends the Spiritus stored in the **Spiritus Gem** placed 
 
 Each slot on the Hellfire Forge, the gem slot included, can be exposed to any side of the block for hopper or pipe access. Click an empty slot in the menu and then click the direction buttons that appear; green sides deliver to (or pull from) that slot, red sides are blocked. Out of the box each of the four ingredient slots faces its own horizontal side: top left is south, top right is west, bottom left is north and bottom right is east. The gem slot takes items from the top, and the output slot gives them from the bottom.
 
+Forge recipes can also be crafted without the block by the **Rhythm of the Beating Anvil** in its Spiritus Invictus mode, with the ingredients in the first four slots of its input container and a Spiritus Gem in the fifth to fuel them. See **[Rituals](Rituals)**.
+
 ## Harvesting Spiritus
 
 Before you can put the forge to use, you must collect Spiritus, the residual spiritus scoured from slain creatures. Two paths open the door.

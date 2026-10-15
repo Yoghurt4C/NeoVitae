@@ -1499,7 +1499,7 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         add("ritual.neovitae.enchanted_vitae.insufficient", "The rite stalls: %s Essentia Vitae is needed to bind these enchantments.");
         add("ritual.neovitae.enchanted_vitae.conflict", "The rite refuses %s alongside %s. Take one of the marked books off the stone, then offer the item again to resume.");
         add("ritual.neovitae.enchanted_vitae.will_bind", "The rite will bind: %s");
-        add("ritual.neovitae.crafting.spiritus.invictus", "Spiritus Invictus: Attempts a Hellfire Forge recipe first, falling back to vanilla crafting if none match.");
+        add("ritual.neovitae.crafting.spiritus.invictus", "Spiritus Invictus: Attempts a Hellfire Forge recipe first, fueled by a Spiritus Gem in the fifth input slot, falling back to vanilla crafting if none match.");
         add("ritual.neovitae.crafting.spiritus.ruina", "Spiritus Ruina: Attempts a Tabula Vitae recipe first, falling back to vanilla crafting if none match.");
         addRitual("yawning_void", "All Consuming Void", "Erases blocks in a small box directly beneath the master ritual stone, one block per refresh. No drops. Spiritus Invictus moves the block to a placement volume above instead of consuming it; Spiritus Ruina limits consumption to blocks matching items in the chest above; Raw Spiritus accelerates the refresh rate.");
         add("ritual.neovitae.yawning_void.spiritus.raw", "Raw Spiritus: Accelerates the refresh rate; with enough raw aura, approaches one block per tick.");
