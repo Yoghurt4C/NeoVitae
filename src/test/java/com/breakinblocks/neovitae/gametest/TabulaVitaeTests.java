@@ -1,11 +1,13 @@
 package com.breakinblocks.neovitae.gametest;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import com.breakinblocks.neovitae.api.soul.AnimaTicket;
 import com.breakinblocks.neovitae.common.block.NVBlocks;
 import com.breakinblocks.neovitae.common.blockentity.TabulaVitaeBlockEntity;
@@ -43,6 +45,31 @@ public final class TabulaVitaeTests {
     }
 
     public static void register(NVTestRegistrar r) {
+        r.add("tabula_vitae/pushes_output_out_of_chosen_face", 80, helper -> {
+            BlockPos tablePos = new BlockPos(3, 1, 2);
+            BlockPos barrelPos = new BlockPos(4, 1, 2);
+            helper.setBlock(new BlockPos(3, 0, 2), Blocks.STONE.defaultBlockState());
+            TabulaVitaeBlockEntity table = placeTable(helper, tablePos);
+            helper.setBlock(barrelPos, Blocks.BARREL.defaultBlockState());
+            BarrelBlockEntity barrel = helper.getBlockEntity(barrelPos, BarrelBlockEntity.class);
+            BlockPos a = helper.absolutePos(tablePos);
+            BlockPos b = helper.absolutePos(barrelPos);
+            Direction face = Direction.getNearest(b.getX() - a.getX(), b.getY() - a.getY(), b.getZ() - a.getZ(), null);
+
+            helper.runAfterDelay(1, () -> {
+                if (table == null) return;
+                table.setOutputFace(face);
+                table.inv.setStackInSlot(TabulaVitaeBlockEntity.OUTPUT_SLOT, new ItemStack(Items.DIAMOND, 3));
+
+                helper.succeedWhen(() -> {
+                    helper.assertTrue(barrel.getItem(0).is(Items.DIAMOND) && barrel.getItem(0).getCount() == 3,
+                            "Barrel should receive the 3 diamonds, holds " + barrel.getItem(0));
+                    helper.assertTrue(table.inv.getStackInSlot(TabulaVitaeBlockEntity.OUTPUT_SLOT).isEmpty(),
+                            "Table output should be empty after pushing");
+                });
+            });
+        });
+
         r.add("tabula_vitae/places_and_initializes", 60, helper -> {
             helper.setBlock(new BlockPos(3, 0, 2), Blocks.STONE.defaultBlockState());
             TabulaVitaeBlockEntity table = placeTable(helper, new BlockPos(3, 1, 2));
@@ -206,7 +233,8 @@ public final class TabulaVitaeTests {
                     ItemStack output = table.inv.getStackInSlot(TabulaVitaeBlockEntity.OUTPUT_SLOT);
                     helper.assertTrue(!(output.isEmpty()), "Table should have crafted with a funded orb (burnTime=" + table.burnTime + ")");
                     int spent = before - anima.getCurrentEV();
-                    helper.assertTrue(!(spent < 50), "Flint recipe costs 50 EV, only " + spent + " was syphoned");
+                    helper.assertTrue(!(spent < 50), "Flint recipe costs 50 EV, only " + spent + " was syphoned");
+
                 });
             });
         });

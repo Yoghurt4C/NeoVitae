@@ -27,7 +27,7 @@ public class RitualsCategory extends CategoryProvider {
                 "___________________",
                 "__t_u_v_w_x________",
                 "___________________",
-                "__y_z_1_2_3________",
+                "__y___1_2_3________",
                 "__4_5_6_7_9_P______",
                 "___________________",
                 "__Q________________"
@@ -196,11 +196,6 @@ public class RitualsCategory extends CategoryProvider {
         condor.withParent(this.parent(crystals));
         condor.withCondition(this.condition().entryViewedOnce(crystals));
         condor.hideWhileLocked(false);
-
-        var crafting = this.add(new RitualCraftingEntry(this).generate('z'));
-        crafting.withParent(this.parent(crystals));
-        crafting.withCondition(this.condition().entryViewedOnce(crystals));
-        crafting.hideWhileLocked(false);
 
         var crystallumFractura = this.add(new RitualCrystallumFracturaEntry(this).generate('1'));
         crystallumFractura.withParent(this.parent(crystals));

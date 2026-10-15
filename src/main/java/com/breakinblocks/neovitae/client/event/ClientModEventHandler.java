@@ -62,6 +62,7 @@ import com.breakinblocks.neovitae.client.screen.RoutingNodeScreen;
 import com.breakinblocks.neovitae.client.screen.ExperienceTomeScreen;
 import com.breakinblocks.neovitae.client.screen.SigilHoldingScreen;
 import com.breakinblocks.neovitae.client.screen.HellfireForgeScreen;
+import com.breakinblocks.neovitae.client.screen.SanguineCrafterScreen;
 import com.breakinblocks.neovitae.client.screen.TrainerScreen;
 import com.breakinblocks.neovitae.common.menu.NVMenus;
 import com.breakinblocks.neovitae.client.screen.AlternatorScreen;
@@ -132,6 +133,7 @@ public class ClientModEventHandler {
         event.register(NVMenus.TELEPOSER.get(), TeleposerScreen::new);
         event.register(NVMenus.TABULA_VITAE.get(), TabulaVitaeScreen::new);
         event.register(NVMenus.HELLFIRE_FORGE.get(), HellfireForgeScreen::new);
+        event.register(NVMenus.SANGUINE_CRAFTER.get(), SanguineCrafterScreen::new);
         event.register(NVMenus.SIGIL_HOLDING.get(), SigilHoldingScreen::new);
         event.register(NVMenus.EXPERIENCE_TOME.get(), ExperienceTomeScreen::new);
         event.register(NVMenus.ROUTING_NODE.get(), RoutingNodeScreen::new);

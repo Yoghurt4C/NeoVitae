@@ -1,0 +1,35 @@
+{
+  "type": "modonomicon:content",
+  "background": {
+    "height": 26,
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26
+  },
+  "category": "neovitae:spiritus",
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "neovitae:generated/guide/nodes/entry_viewed_once/required/spiritus_routing_nodes",
+    "tooltip": {
+      "translate": "tooltip.modonomicon.condition.entry_unlocked",
+      "with": [
+        {
+          "translate": "book.neovitae.guide.spiritus.routing_nodes.name"
+        }
+      ]
+    }
+  },
+  "description": "book.neovitae.guide.spiritus.sanguine_crafter.description",
+  "icon": {
+    "id": "neovitae:sanguine_crafter"
+  },
+  "id": "neovitae:spiritus/sanguine_crafter",
+  "name": "book.neovitae.guide.spiritus.sanguine_crafter.name",
+  "parents": [
+    {
+      "entry": "neovitae:spiritus/routing_nodes"
+    }
+  ],
+  "sort_number": 17,
+  "x": -4,
+  "y": -1
+}

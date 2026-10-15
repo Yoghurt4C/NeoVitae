@@ -104,7 +104,7 @@ public class AthanorBlock extends Block implements EntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(state.getMenuProvider(level, pos), buf -> buf.writeBlockPos(pos));
+            serverPlayer.openMenu(state.getMenuProvider(level, pos));
         }
         return InteractionResult.SUCCESS;
     }

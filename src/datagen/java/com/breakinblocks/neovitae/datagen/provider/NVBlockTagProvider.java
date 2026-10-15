@@ -59,6 +59,11 @@ public class NVBlockTagProvider extends BlockTagsProvider {
         this.tag(NVTags.Blocks.PULSE_ON_CRAFTING)
                 .add(Blocks.REDSTONE_LAMP, Blocks.NOTE_BLOCK);
 
+        this.tag(NVTags.Blocks.SANGUINE_CASINGS)
+                .add(NVBlocks.SANGUINE_CASING.block().get(),
+                        NVBlocks.HELLFORGED_SANGUINE_CASING.block().get(),
+                        NVBlocks.SWIFT_SANGUINE_CASING.block().get());
+
         this.tag(NVTags.Blocks.TELEPOSE_BLACKLIST)
                 .add(Blocks.BEDROCK,
                         Blocks.BARRIER,
@@ -90,6 +95,8 @@ public class NVBlockTagProvider extends BlockTagsProvider {
                 .add(NVBlocks.HELLFIRE_FORGE.block().get())
                 .add(NVBlocks.ATHANOR_BLOCK.block().get())
                 .add(NVBlocks.TABULA_VITAE.block().get())
+                .add(NVBlocks.SANGUINE_CRAFTER.block().get())
+                .addTag(NVTags.Blocks.SANGUINE_CASINGS)
                 .add(NVBlocks.VITAE_LINK.block().get())
                 .add(NVBlocks.ORB_FILLING_LINK.block().get())
                 .add(NVBlocks.TELEPOSER.block().get())
@@ -135,6 +142,8 @@ public class NVBlockTagProvider extends BlockTagsProvider {
                 .add(NVBlocks.HELLFIRE_FORGE.block().get())
                 .add(NVBlocks.ATHANOR_BLOCK.block().get())
                 .add(NVBlocks.TABULA_VITAE.block().get())
+                .add(NVBlocks.SANGUINE_CRAFTER.block().get())
+                .addTag(NVTags.Blocks.SANGUINE_CASINGS)
                 .add(NVBlocks.TELEPOSER.block().get())
                 .add(NVBlocks.BLANK_RITUAL_STONE.block().get())
                 .add(NVBlocks.AIR_RITUAL_STONE.block().get())

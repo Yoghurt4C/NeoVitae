@@ -7,16 +7,25 @@ import net.neoforged.neoforge.transfer.resource.Resource;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.IntUnaryOperator;
+
 public class SideConfigResourceHandler<T extends Resource> extends DelegatingResourceHandler<T> {
 
     private final SlotSideConfig config;
     @Nullable
     private final Direction side;
+    private final IntUnaryOperator slotToGroup;
 
     public SideConfigResourceHandler(ResourceHandler<T> delegate, SlotSideConfig config, @Nullable Direction side) {
+        this(delegate, config, side, IntUnaryOperator.identity());
+    }
+
+    public SideConfigResourceHandler(ResourceHandler<T> delegate, SlotSideConfig config, @Nullable Direction side,
+                                     IntUnaryOperator slotToGroup) {
         super(delegate);
         this.config = config;
         this.side = side;
+        this.slotToGroup = slotToGroup;
     }
 
     @Override
@@ -56,6 +65,6 @@ public class SideConfigResourceHandler<T extends Resource> extends DelegatingRes
 
     private boolean isAllowed(int slot) {
         if (side == null) return true;
-        return config.isAllowed(slot, side);
+        return config.isAllowed(slotToGroup.applyAsInt(slot), side);
     }
 }

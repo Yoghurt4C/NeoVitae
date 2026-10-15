@@ -59,7 +59,7 @@ public class TeleposerBlock extends Block implements EntityBlock {
         }
 
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu((MenuProvider) tile, pos);
+            serverPlayer.openMenu((MenuProvider) tile);
         }
 
         return InteractionResult.SUCCESS;

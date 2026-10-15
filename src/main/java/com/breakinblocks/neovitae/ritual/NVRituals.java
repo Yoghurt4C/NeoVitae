@@ -92,8 +92,6 @@ public final class NVRituals {
     public static final DeferredHolder<Ritual, RitualUpgradeRemove> UPGRADE_REMOVE =
             registerRitual("upgrade_remove", RitualUpgradeRemove::new);
 
-    public static final DeferredHolder<Ritual, RitualCrafting> CRAFTING =
-            registerRitual("crafting", RitualCrafting::new);
 
     public static final DeferredHolder<Ritual, RitualYawningVoid> YAWNING_VOID =
             registerRitual("yawning_void", RitualYawningVoid::new);

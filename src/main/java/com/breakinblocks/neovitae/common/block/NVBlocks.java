@@ -62,6 +62,18 @@ public class NVBlocks {
             BLOCK_REG.register("vitae_link", VitaeLinkBlock::new, defaultBlockProps());
     public static final BlockWithItemHolder<OrbFillingLinkBlock, BlockItem> ORB_FILLING_LINK =
             BLOCK_REG.register("orb_filling_link", OrbFillingLinkBlock::new, defaultBlockProps());
+    public static final BlockWithItemHolder<SanguineCrafterBlock, BlockItem> SANGUINE_CRAFTER =
+            BLOCK_REG.register("sanguine_crafter", SanguineCrafterBlock::new, defaultBlockProps());
+    public static final BlockWithItemHolder<SanguineCasingBlock, BlockItem> SANGUINE_CASING =
+            BLOCK_REG.register("sanguine_casing", SanguineCasingBlock::new, sanguineCasingProps());
+    public static final BlockWithItemHolder<SanguineCasingBlock, BlockItem> HELLFORGED_SANGUINE_CASING =
+            BLOCK_REG.register("hellforged_sanguine_casing", SanguineCasingBlock::new, sanguineCasingProps());
+    public static final BlockWithItemHolder<SanguineCasingBlock, BlockItem> SWIFT_SANGUINE_CASING =
+            BLOCK_REG.register("swift_sanguine_casing", SanguineCasingBlock::new, sanguineCasingProps());
+
+    private static BlockBehaviour.Properties sanguineCasingProps() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(3.0F, 6.0F).sound(SoundType.STONE).requiresCorrectToolForDrops();
+    }
 
     private static final BlockBehaviour.Properties rune_properties_src() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(2.0F, 5.0F).sound(SoundType.STONE).requiresCorrectToolForDrops().lightLevel(state -> 10);

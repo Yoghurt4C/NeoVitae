@@ -50,9 +50,8 @@ public class HellfireForgeEntry extends EntryProvider {
         this.pageText("Every slot of the Forge, the gem slot included, can be opened to any side for hoppers and pipes. "
                 + "Click an empty slot, then toggle the side buttons that appear: green sides reach that slot, red "
                 + "sides do not. By default each ingredient slot takes its own side, the gem the top, and the output "
-                + "the bottom.\\\n\\\n"
-                + "[#](2E8B57)The Rhythm of the Beating Anvil can also work Forge recipes, fueled by a gem in the "
-                + "fifth slot of its input container.[#]()");
+                + "the bottom. With the output slot chosen, right-click a side to push finished items out of it.\\\n\\\n"
+                + "[#](2E8B57)The Sanguine Crafter can also work Forge recipes, many at a time.[#]()");
     }
 
     @Override

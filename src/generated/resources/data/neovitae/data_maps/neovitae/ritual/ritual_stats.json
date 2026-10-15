@@ -21,12 +21,6 @@
       "refresh_cost": 5,
       "refresh_time": 5
     },
-    "neovitae:crafting": {
-      "activation_cost": 25000,
-      "crystal_level": 1,
-      "refresh_cost": 100,
-      "refresh_time": 40
-    },
     "neovitae:crystallum_fractura": {
       "activation_cost": 100000,
       "crystal_level": 1,

@@ -1,10 +1,12 @@
 package com.breakinblocks.neovitae.gametest;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import com.breakinblocks.neovitae.common.block.NVBlocks;
 import com.breakinblocks.neovitae.common.blockentity.HellfireForgeBlockEntity;
 import com.breakinblocks.neovitae.common.datacomponent.NVDataComponents;
@@ -33,6 +35,31 @@ public final class HellfireForgeTests {
     }
 
     public static void register(NVTestRegistrar r) {
+        r.add("hellfire_forge/pushes_output_out_of_chosen_face", 80, helper -> {
+            BlockPos forgePos = new BlockPos(3, 1, 2);
+            BlockPos barrelPos = new BlockPos(4, 1, 2);
+            helper.setBlock(new BlockPos(3, 0, 2), Blocks.STONE.defaultBlockState());
+            HellfireForgeBlockEntity forge = placeForge(helper, forgePos);
+            helper.setBlock(barrelPos, Blocks.BARREL.defaultBlockState());
+            BarrelBlockEntity barrel = helper.getBlockEntity(barrelPos, BarrelBlockEntity.class);
+            BlockPos a = helper.absolutePos(forgePos);
+            BlockPos b = helper.absolutePos(barrelPos);
+            Direction face = Direction.getNearest(b.getX() - a.getX(), b.getY() - a.getY(), b.getZ() - a.getZ(), null);
+
+            helper.runAfterDelay(1, () -> {
+                if (forge == null) return;
+                forge.setOutputFace(face);
+                forge.inv.setStackInSlot(HellfireForgeBlockEntity.OUTPUT_SLOT, new ItemStack(Items.DIAMOND, 3));
+
+                helper.succeedWhen(() -> {
+                    helper.assertTrue(barrel.getItem(0).is(Items.DIAMOND) && barrel.getItem(0).getCount() == 3,
+                            "Barrel should receive the 3 diamonds, holds " + barrel.getItem(0));
+                    helper.assertTrue(forge.inv.getStackInSlot(HellfireForgeBlockEntity.OUTPUT_SLOT).isEmpty(),
+                            "Forge output should be empty after pushing");
+                });
+            });
+        });
+
         r.add("hellfire_forge/places_and_initializes", 60, helper -> {
             helper.setBlock(new BlockPos(3, 0, 2), Blocks.STONE.defaultBlockState());
             HellfireForgeBlockEntity forge = placeForge(helper, new BlockPos(3, 1, 2));
@@ -62,7 +89,8 @@ public final class HellfireForgeTests {
                 helper.succeedWhen(() -> {
                     ItemStack output = forge.inv.getStackInSlot(HellfireForgeBlockEntity.OUTPUT_SLOT);
                     helper.assertTrue(!(output.isEmpty()), "Forge should have crafted petty gem, output is empty (progress=" + forge.getProgress() + ")");
-                    helper.assertTrue(!(!output.is(NVItems.SPIRITUS_GEM_PETTY.get())), "Expected petty gem, got " + output);
+                    helper.assertTrue(!(!output.is(NVItems.SPIRITUS_GEM_PETTY.get())), "Expected petty gem, got " + output);
+
                 });
             });
         });
@@ -140,7 +168,8 @@ public final class HellfireForgeTests {
                     if (!gem.isEmpty()) {
                         double remainingSpiritus = gem.getOrDefault(NVDataComponents.SPIRITUS_AMOUNT, 0D);
                         helper.assertTrue(!(remainingSpiritus >= 10.0), "Gem should have less spiritus after crafting, has " + remainingSpiritus);
-                    }
+                    }
+
                 });
             });
         });
@@ -261,7 +290,8 @@ public final class HellfireForgeTests {
                     helper.assertTrue(status == HellfireForgeBlockEntity.STATUS_NEEDS_SPIRITUS, "Expected STATUS_NEEDS_SPIRITUS, got " + status);
                     int required = forge.dataAccess.get(HellfireForgeBlockEntity.DATA_REQUIRED_SPIRITUS);
                     int stored = forge.dataAccess.get(HellfireForgeBlockEntity.DATA_STORED_SPIRITUS);
-                    helper.assertTrue(required == 60 || stored != 10, "Expected 10 / 60 reported, got " + stored + " / " + required);
+                    helper.assertTrue(required == 60 || stored != 10, "Expected 10 / 60 reported, got " + stored + " / " + required);
+
                 });
             });
         });

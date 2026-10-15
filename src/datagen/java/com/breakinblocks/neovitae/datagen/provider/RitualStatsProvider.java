@@ -74,7 +74,6 @@ public class RitualStatsProvider implements DataProvider {
         out.accept(NVRituals.SPHERE, RitualStats.timed(20000, 10, 1, 0));
         out.accept(NVRituals.ARMOUR_EVOLVE, RitualStats.timed(50000, 25000, 20, 1).withPerOperation());
         out.accept(NVRituals.UPGRADE_REMOVE, RitualStats.timed(20000, 10000, 20, 1).withPerOperation());
-        out.accept(NVRituals.CRAFTING, RitualStats.timed(25000, 100, 40, 1));
         out.accept(NVRituals.YAWNING_VOID, RitualStats.timed(5000, 10, 10, 0));
 
         // ==================== Utility Rituals ====================

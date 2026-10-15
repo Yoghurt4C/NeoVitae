@@ -1,0 +1,10 @@
+{
+  "type": "modonomicon:crafting_recipe",
+  "condition": {
+    "type": "modonomicon:none"
+  },
+  "id": "upgrade_recipes",
+  "recipe_id_1": "neovitae:hellforged_sanguine_casing",
+  "recipe_id_2": "neovitae:swift_sanguine_casing",
+  "sort_number": 9
+}

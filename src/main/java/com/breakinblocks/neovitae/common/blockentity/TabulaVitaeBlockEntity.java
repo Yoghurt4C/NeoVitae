@@ -13,6 +13,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
@@ -43,6 +44,8 @@ import com.breakinblocks.neovitae.client.sound.LoopSoundManager;
 import com.breakinblocks.neovitae.common.NVSounds;
 import com.breakinblocks.neovitae.client.particle.ColoredParticleOptions;
 import com.breakinblocks.neovitae.common.particle.NVParticles;
+import com.breakinblocks.neovitae.common.sideconfig.OutputFaceConfigurable;
+import com.breakinblocks.neovitae.common.sideconfig.OutputPusher;
 import com.breakinblocks.neovitae.common.sideconfig.SideConfigurable;
 import com.breakinblocks.neovitae.common.sideconfig.SlotSideConfig;
 import net.minecraft.server.level.ServerLevel;
@@ -55,7 +58,7 @@ import java.util.Optional;
 import java.util.Collections;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
-public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvider, SideConfigurable {
+public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvider, SideConfigurable, OutputFaceConfigurable {
     public enum IdleReason {
         NONE, NO_RECIPE, NO_ORB, ORB_UNBOUND, TIER_TOO_LOW, NOT_ENOUGH_EV, OUTPUT_BLOCKED, NO_NETWORK, CUTTING_FLUID_UNBOUND;
 
@@ -91,6 +94,8 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
     public int activeSlot = -1;
 
     private final SlotSideConfig sideConfig = new SlotSideConfig(SLOT_COUNT, DEFAULT_SIDE_CONFIG);
+    @Nullable
+    private Direction outputFace = null;
 
     private TabulaVitaeRecipe cachedRecipe = null;
     private FlaskRecipe cachedFlaskRecipe = null;
@@ -176,6 +181,7 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
         connectedPos = new BlockPos(tag.getIntOr("connectedX", 0), tag.getIntOr("connectedY", 0), tag.getIntOr("connectedZ", 0));
         tag.child("inventory").ifPresent(inv::deserialize);
         sideConfig.load(tag);
+        outputFace = OutputPusher.load(tag);
     }
 
     @Override
@@ -190,11 +196,23 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
         tag.putInt("connectedZ", connectedPos.getZ());
         inv.serialize(tag.child("inventory"));
         sideConfig.save(tag);
+        OutputPusher.save(tag, outputFace);
     }
 
     @Override
     public SlotSideConfig getSideConfig() {
         return sideConfig;
+    }
+
+    @Override
+    @Nullable
+    public Direction getOutputFace() {
+        return outputFace;
+    }
+
+    @Override
+    public void setOutputFace(@Nullable Direction face) {
+        outputFace = face;
     }
 
     public void setInitialTableParameters(Direction direction, boolean isSlave, BlockPos connectedPos) {
@@ -247,6 +265,10 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
         if (!checkedSlaveInventory) {
             checkedSlaveInventory = true;
             reclaimSlaveInventory();
+        }
+
+        if (OutputPusher.shouldPush(level)) {
+            OutputPusher.push(level, worldPosition, outputFace, inv, OUTPUT_SLOT, OUTPUT_SLOT);
         }
 
         ItemStack orbStack = inv.getStackInSlot(ORB_SLOT);
@@ -681,4 +703,8 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
         super.preRemoveSideEffects(pos, state);
     }
 
+    @Override
+    public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf buffer) {
+        buffer.writeBlockPos(worldPosition);
+    }
 }

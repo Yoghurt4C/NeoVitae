@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
@@ -34,6 +35,8 @@ import com.breakinblocks.neovitae.common.particle.NVParticles;
 import com.breakinblocks.neovitae.common.recipe.NVRecipes;
 import com.breakinblocks.neovitae.common.recipe.forge.ForgeInput;
 import com.breakinblocks.neovitae.common.recipe.forge.ForgeRecipe;
+import com.breakinblocks.neovitae.common.sideconfig.OutputFaceConfigurable;
+import com.breakinblocks.neovitae.common.sideconfig.OutputPusher;
 import com.breakinblocks.neovitae.common.sideconfig.SideConfigResourceHandler;
 import com.breakinblocks.neovitae.common.sideconfig.SideConfigurable;
 import com.breakinblocks.neovitae.common.sideconfig.SlotSideConfig;
@@ -46,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuProvider, SideConfigurable {
+public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuProvider, SideConfigurable, OutputFaceConfigurable {
     public final Inv inv = new Inv();
 
     public class Inv extends ItemStacksResourceHandler {
@@ -95,6 +98,8 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
 
     private final SlotSideConfig sideConfig = new SlotSideConfig(SLOT_COUNT, DEFAULT_SIDE_CONFIG);
     public int activeSlot = -1;
+    @Nullable
+    private Direction outputFace = null;
 
     public static final int MAX_PROGRESS = 100;
 
@@ -158,6 +163,10 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
         }
 
         absorbSpiritusFromChunk(level, pos, tile);
+
+        if (OutputPusher.shouldPush(level)) {
+            OutputPusher.push(level, pos, tile.outputFace, tile.inv, OUTPUT_SLOT, OUTPUT_SLOT);
+        }
 
         ForgeInput input = tile.getInput();
         Optional<RecipeHolder<ForgeRecipe>> recipeOptional = findRecipe(level, input);
@@ -278,8 +287,14 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
 
     private static void absorbSpiritusFromChunk(Level level, BlockPos pos, HellfireForgeBlockEntity tile) {
         ItemStack gemStack = tile.inv.getStackInSlot(GEM_SLOT);
+        if (absorbIntoGem(level, pos, gemStack)) {
+            tile.inv.setStackInSlot(GEM_SLOT, gemStack);
+        }
+    }
+
+    public static boolean absorbIntoGem(Level level, BlockPos pos, ItemStack gemStack) {
         if (gemStack.isEmpty() || !SpiritusHelper.isRechargeable(gemStack)) {
-            return;
+            return false;
         }
         boolean changed = false;
         for (SpiritusType type : SpiritusType.values()) {
@@ -296,9 +311,7 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
                 }
             }
         }
-        if (changed) {
-            tile.inv.setStackInSlot(GEM_SLOT, gemStack);
-        }
+        return changed;
     }
 
     public ForgeInput getInput() {
@@ -338,6 +351,7 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
         tag.child("inventory").ifPresent(inv::deserialize);
         progress = tag.getIntOr("progress", 0);
         sideConfig.load(tag);
+        outputFace = OutputPusher.load(tag);
     }
 
     @Override
@@ -346,11 +360,23 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
         inv.serialize(tag.child("inventory"));
         tag.putInt("progress", progress);
         sideConfig.save(tag);
+        OutputPusher.save(tag, outputFace);
     }
 
     @Override
     public SlotSideConfig getSideConfig() {
         return sideConfig;
+    }
+
+    @Override
+    @Nullable
+    public Direction getOutputFace() {
+        return outputFace;
+    }
+
+    @Override
+    public void setOutputFace(@Nullable Direction face) {
+        outputFace = face;
     }
 
     public @Nullable ResourceHandler<ItemResource> getInventory(@Nullable Direction side) {
@@ -384,4 +410,8 @@ public class HellfireForgeBlockEntity extends BaseBlockEntity implements MenuPro
         super.preRemoveSideEffects(pos, state);
     }
 
+    @Override
+    public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf buffer) {
+        buffer.writeBlockPos(worldPosition);
+    }
 }

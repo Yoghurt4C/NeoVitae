@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "T": "neovitae:tabula_spiritus",
+    "X": "minecraft:crafter",
+    "c": "neovitae:sanguine_casing"
+  },
+  "pattern": [
+    "cTc",
+    "cXc",
+    "ccc"
+  ],
+  "result": {
+    "id": "neovitae:sanguine_crafter"
+  }
+}

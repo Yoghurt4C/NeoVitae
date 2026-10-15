@@ -2,30 +2,22 @@ package com.breakinblocks.neovitae.client.screen;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import com.breakinblocks.neovitae.NeoVitae;
-import com.breakinblocks.neovitae.client.widgets.SideToggleButton;
+import com.breakinblocks.neovitae.client.widgets.SideConfigPanel;
 import com.breakinblocks.neovitae.common.blockentity.HellfireForgeBlockEntity;
 import com.breakinblocks.neovitae.common.menu.HellfireForgeMenu;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import com.breakinblocks.neovitae.common.network.SetSideConfigPayload;
-import com.breakinblocks.neovitae.common.sideconfig.SlotSideConfig;
 import com.breakinblocks.neovitae.compat.jei.NeoVitaeJEIPlugin;
 import com.breakinblocks.neovitae.compat.jei.forge.HellfireForgeRecipeCategory;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class HellfireForgeScreen extends AbstractContainerScreen<HellfireForgeMenu> {
@@ -35,7 +27,7 @@ public class HellfireForgeScreen extends AbstractContainerScreen<HellfireForgeMe
     private static final int PROGRESS_X = 106;
     private static final int PROGRESS_Y = 14;
 
-    private final Map<Direction, SideToggleButton> sideButtons = new EnumMap<>(Direction.class);
+    private SideConfigPanel sidePanel;
 
     public HellfireForgeScreen(HellfireForgeMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title, 176, 205);
@@ -46,87 +38,16 @@ public class HellfireForgeScreen extends AbstractContainerScreen<HellfireForgeMe
     @Override
     protected void init() {
         super.init();
-        sideButtons.clear();
-
-        int left = (this.width - this.imageWidth) / 2;
-        int top = (this.height - this.imageHeight) / 2;
-
-        addSideButton(left + 133, top + 50, Direction.DOWN, "D");
-        addSideButton(left + 151, top + 50, Direction.UP, "U");
-        addSideButton(left + 133, top + 68, Direction.NORTH, "N");
-        addSideButton(left + 151, top + 68, Direction.SOUTH, "S");
-        addSideButton(left + 133, top + 86, Direction.WEST, "W");
-        addSideButton(left + 151, top + 86, Direction.EAST, "E");
-
-        refreshSideButtons();
-    }
-
-    private void addSideButton(int x, int y, Direction direction, String label) {
-        SideToggleButton button = new SideToggleButton(
-                x, y, direction, Component.literal(label),
-                () -> sideAllowed(direction),
-                btn -> onDirectionButton(direction));
-        button.visible = false;
-        sideButtons.put(direction, button);
-        this.addRenderableWidget(button);
-    }
-
-    private boolean sideAllowed(Direction direction) {
-        int slot = menu.tile.activeSlot;
-        return slot >= 0 && menu.tile.getSideConfig().isAllowed(slot, direction);
-    }
-
-    private void onDirectionButton(Direction direction) {
         HellfireForgeBlockEntity tile = menu.tile;
-        int slot = tile.activeSlot;
-        if (slot < 0) return;
-        SlotSideConfig config = tile.getSideConfig();
-        boolean newState = !config.isAllowed(slot, direction);
-        config.setAllowed(slot, direction, newState);
-        ClientPacketDistributor.sendToServer(new SetSideConfigPayload(tile.getBlockPos(), slot, direction.get3DDataValue(), newState));
-        refreshSideButtonTooltips();
+        sidePanel = new SideConfigPanel(tile.getBlockPos(), tile.getSideConfig(), () -> tile.activeSlot,
+                HellfireForgeScreen::slotName, HellfireForgeBlockEntity.OUTPUT_SLOT, tile);
+        sidePanel.create(this::addRenderableWidget, leftPos + 133, topPos + 50);
     }
 
     @Override
     protected void containerTick() {
         super.containerTick();
-        refreshSideButtons();
-    }
-
-    private void refreshSideButtons() {
-        boolean active = menu.tile.activeSlot >= 0;
-        for (SideToggleButton button : sideButtons.values()) {
-            button.visible = active;
-        }
-        if (active) refreshSideButtonTooltips();
-    }
-
-    private void refreshSideButtonTooltips() {
-        int slot = menu.tile.activeSlot;
-        if (slot < 0) return;
-        Component slotName = slotName(slot);
-        for (Map.Entry<Direction, SideToggleButton> entry : sideButtons.entrySet()) {
-            Direction dir = entry.getKey();
-            boolean allowed = menu.tile.getSideConfig().isAllowed(slot, dir);
-            MutableComponent header = Component.translatable(
-                    "gui.neovitae.tabula_vitae.side_button",
-                    Component.translatable("gui.neovitae.side." + dir.getName()).withStyle(ChatFormatting.WHITE),
-                    slotName);
-            Component state = allowed
-                    ? Component.translatable("gui.neovitae.tabula_vitae.side_allowed").withStyle(ChatFormatting.GREEN)
-                    : Component.translatable("gui.neovitae.tabula_vitae.side_blocked").withStyle(ChatFormatting.RED);
-            Component hint = Component.translatable("gui.neovitae.tabula_vitae.side_hint").withStyle(ChatFormatting.GRAY);
-            entry.getValue().setTooltip(Tooltip.create(joinLines(header, state, hint)));
-        }
-    }
-
-    private static Component joinLines(Component... lines) {
-        MutableComponent root = Component.empty();
-        for (int i = 0; i < lines.length; i++) {
-            if (i > 0) root.append("\n");
-            root.append(lines[i]);
-        }
-        return root;
+        sidePanel.tick();
     }
 
     private static Component slotName(int slot) {
@@ -216,6 +137,9 @@ public class HellfireForgeScreen extends AbstractContainerScreen<HellfireForgeMe
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean dragging) {
+        if (sidePanel.mouseClicked(event)) {
+            return true;
+        }
         if (event.button() == 0 && isOverProgress(event.x(), event.y())) {
             var runtime = NeoVitaeJEIPlugin.jeiRuntime;
             if (runtime != null) {
