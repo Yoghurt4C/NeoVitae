@@ -1508,7 +1508,7 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         addRitual("shepherd", "Ritual of the Shepherd", "Tends the animals in range: it hastens the growth of the young and coaxes ready adults into breeding, spending a little Essentia Vitae to feed them so no food or chest is required. Raw Spiritus quickens its pulse.");
         addRitual("butchering", "Ritual of Butchering", "Slaughters adult animals in range and gathers their drops into an adjacent chest, always leaving enough of each species alive to keep breeding. Set how many of each to spare with the Ritual Configurator.");
         addRitual("felling", "Ritual of Fallen Trees", "Fells every tree in range and drops the logs into an adjacent chest.");
-        addRitual("suppression", "Dome of Suppression", "Replaces fluid source blocks in range with air, restoring them when the ritual stops.");
+        addRitual("suppression", "Dome of Suppression", "Holds back every fluid in a dome over the ritual, leaving dry space to build in. Waterlogged blocks keep their water. The fluid flows back a few seconds after the ritual stops.");
         addRitual("containment", "Ritual of Containment", "Pushes any creature trying to leave the area back toward the center; an invisible cage.");
         addRitual("expulsion", "Ritual of Expulsion", "Drives every creature outward from the ritual center.");
         addRitual("zephyr", "The Gathering", "Persistent wind that gathers loose items and XP. With a chest on the master stone, items anywhere in range go straight into it, and once it is full they are dropped on top of it; with no chest, they are carried to the owner.");

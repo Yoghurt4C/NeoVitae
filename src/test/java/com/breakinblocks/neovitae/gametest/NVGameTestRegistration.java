@@ -63,5 +63,6 @@ public class NVGameTestRegistration {
         EnderSeverArrayTests.register(r);
         SentientScytheEnchantTests.register(r);
         SentientSpearTests.register(r);
+        SuppressionRitualTests.register(r);
     }
 }

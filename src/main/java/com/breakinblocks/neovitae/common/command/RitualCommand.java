@@ -114,7 +114,7 @@ public class RitualCommand {
         }
 
         Ritual ritual = mrs.getCurrentRitual();
-        Identifier ritualId = RitualRegistry.getId(ritual);
+        Identifier ritualId = mrs.getCurrentRitualId();
 
         source.sendSuccess(() -> Component.translatable("commands.neovitae.ritual.info.header"), false);
         source.sendSuccess(() -> Component.translatable("commands.neovitae.ritual.info.name",
@@ -140,7 +140,7 @@ public class RitualCommand {
             throw ERROR_NO_RITUAL.create();
         }
 
-        Identifier ritualId = RitualRegistry.getId(mrs.getCurrentRitual());
+        Identifier ritualId = mrs.getCurrentRitualId();
         mrs.stopRitual(Ritual.BreakType.DEACTIVATE);
 
         context.getSource().sendSuccess(() -> Component.translatable("commands.neovitae.ritual.stopped",
