@@ -14,7 +14,8 @@
   ],
   "client": [
     "client.LocalPlayerMixin",
-    "client.MinecraftMixin"
+    "client.MinecraftMixin",
+    "client.ScreenEffectRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

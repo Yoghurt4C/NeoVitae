@@ -1,7 +1,6 @@
 package com.breakinblocks.neovitae.common.fluid;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Items;
@@ -11,8 +10,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -102,43 +99,10 @@ public class NVFluids {
                 .tickRate(10);
     }
 
-    private static void registerClientExtensions(RegisterClientExtensionsEvent event) {
-        event.registerFluidType(new IClientFluidTypeExtensions() {
-            public Identifier getStillTexture() {
-                return Identifier.fromNamespaceAndPath(NeoVitae.MODID, "block/essentia_vitae_still");
-            }
-
-            public Identifier getFlowingTexture() {
-                return Identifier.fromNamespaceAndPath(NeoVitae.MODID, "block/essentia_vitae_flowing");
-            }
-        }, ESSENTIA_VITAE_TYPE);
-
-        event.registerFluidType(new IClientFluidTypeExtensions() {
-            public Identifier getStillTexture() {
-                return Identifier.fromNamespaceAndPath(NeoVitae.MODID, "block/animated_spiritus_still");
-            }
-
-            public Identifier getFlowingTexture() {
-                return Identifier.fromNamespaceAndPath(NeoVitae.MODID, "block/animated_spiritus_flowing");
-            }
-        }, ANIMATED_SPIRITUS_TYPE);
-
-        event.registerFluidType(new IClientFluidTypeExtensions() {
-            public Identifier getStillTexture() {
-                return Identifier.fromNamespaceAndPath(NeoVitae.MODID, "block/liquified_experience_still");
-            }
-
-            public Identifier getFlowingTexture() {
-                return Identifier.fromNamespaceAndPath(NeoVitae.MODID, "block/liquified_experience_flowing");
-            }
-        }, LIQUIFIED_EXPERIENCE_TYPE);
-    }
-
     public static void register(IEventBus modBus) {
         FLUID_TYPES.register(modBus);
         FLUIDS.register(modBus);
         BUCKETS.register(modBus);
         SOURCE_BLOCKS.register(modBus);
-        modBus.addListener(NVFluids::registerClientExtensions);
     }
 }

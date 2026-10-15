@@ -20,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
@@ -31,6 +32,7 @@ import com.breakinblocks.neovitae.common.item.sigil.ItemSigilHolding;
 import com.breakinblocks.neovitae.client.ClientHandler;
 import com.breakinblocks.neovitae.client.GuideQuickOpen;
 import com.breakinblocks.neovitae.client.hud.GuiEditHUD;
+import com.breakinblocks.neovitae.client.render.NVFluidClientExtensions;
 import com.breakinblocks.neovitae.client.ClientSpiritusCache;
 import com.breakinblocks.neovitae.client.sound.LoopSoundManager;
 import com.breakinblocks.neovitae.common.item.NVItems;
@@ -46,6 +48,14 @@ import java.util.function.Consumer;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = NeoVitae.MODID)
 public class ClientEventHandler {
+
+    @SubscribeEvent
+    public static void onBlockScreenEffect(RenderBlockScreenEffectEvent event) {
+        if (event.getOverlayType() == RenderBlockScreenEffectEvent.OverlayType.WATER
+                && NVFluidClientExtensions.isEyeInNeoVitaeFluid(event.getPlayer())) {
+            event.setCanceled(true);
+        }
+    }
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
