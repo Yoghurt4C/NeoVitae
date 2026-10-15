@@ -39,7 +39,7 @@ public class DungeonBlocks {
     public static final Map<DungeonVariant, BlockWithItemHolder<Block, BlockItem>> DUNGEON_BRICK_2 = new EnumMap<>(DungeonVariant.class);
     public static final Map<DungeonVariant, BlockWithItemHolder<Block, BlockItem>> DUNGEON_BRICK_3 = new EnumMap<>(DungeonVariant.class);
     public static final Map<DungeonVariant, BlockWithItemHolder<Block, BlockItem>> DUNGEON_STONE = new EnumMap<>(DungeonVariant.class);
-    public static final Map<DungeonVariant, BlockWithItemHolder<Block, BlockItem>> DUNGEON_EYE = new EnumMap<>(DungeonVariant.class);
+    public static final Map<DungeonVariant, BlockWithItemHolder<RotatedPillarBlock, BlockItem>> DUNGEON_EYE = new EnumMap<>(DungeonVariant.class);
     public static final Map<DungeonVariant, BlockWithItemHolder<Block, BlockItem>> DUNGEON_POLISHED = new EnumMap<>(DungeonVariant.class);
     public static final Map<DungeonVariant, BlockWithItemHolder<Block, BlockItem>> DUNGEON_TILE = new EnumMap<>(DungeonVariant.class);
     public static final Map<DungeonVariant, BlockWithItemHolder<Block, BlockItem>> DUNGEON_SMALLBRICK = new EnumMap<>(DungeonVariant.class);
@@ -48,7 +48,7 @@ public class DungeonBlocks {
 
     public static final Map<DungeonVariant, BlockWithItemHolder<RotatedPillarBlock, BlockItem>> DUNGEON_PILLAR_CENTER = new EnumMap<>(DungeonVariant.class);
     public static final Map<DungeonVariant, BlockWithItemHolder<RotatedPillarBlock, BlockItem>> DUNGEON_PILLAR_SPECIAL = new EnumMap<>(DungeonVariant.class);
-    public static final Map<DungeonVariant, BlockWithItemHolder<Block, BlockItem>> DUNGEON_PILLAR_CAP = new EnumMap<>(DungeonVariant.class);
+    public static final Map<DungeonVariant, BlockWithItemHolder<BlockPillarCap, BlockItem>> DUNGEON_PILLAR_CAP = new EnumMap<>(DungeonVariant.class);
 
     public static final Map<DungeonVariant, BlockWithItemHolder<StairBlock, BlockItem>> DUNGEON_BRICK_STAIRS = new EnumMap<>(DungeonVariant.class);
     public static final Map<DungeonVariant, BlockWithItemHolder<StairBlock, BlockItem>> DUNGEON_POLISHED_STAIRS = new EnumMap<>(DungeonVariant.class);
@@ -124,7 +124,7 @@ public class DungeonBlocks {
         DUNGEON_BRICK_2.put(variant, registerSimple("dungeon_brick2" + suffix, dungeonStoneProps()));
         DUNGEON_BRICK_3.put(variant, registerSimple("dungeon_brick3" + suffix, dungeonStoneProps()));
         DUNGEON_STONE.put(variant, registerSimple("dungeon_stone" + suffix, dungeonStoneProps()));
-        DUNGEON_EYE.put(variant, registerSimple("dungeon_eye" + suffix, dungeonEyeProps()));
+        DUNGEON_EYE.put(variant, REG.register("dungeon_eye" + suffix, RotatedPillarBlock::new, dungeonEyeProps()));
         DUNGEON_POLISHED.put(variant, registerSimple("dungeon_polished" + suffix, dungeonStoneProps()));
         DUNGEON_TILE.put(variant, registerSimple("dungeon_tile" + suffix, dungeonStoneProps()));
         DUNGEON_SMALLBRICK.put(variant, registerSimple("dungeon_smallbrick" + suffix, dungeonStoneProps()));
@@ -133,7 +133,7 @@ public class DungeonBlocks {
 
         DUNGEON_PILLAR_CENTER.put(variant, registerPillar("dungeon_pillar_center" + suffix));
         DUNGEON_PILLAR_SPECIAL.put(variant, registerPillar("dungeon_pillar_special" + suffix));
-        DUNGEON_PILLAR_CAP.put(variant, registerSimple("dungeon_pillar_cap" + suffix, dungeonStoneProps()));
+        DUNGEON_PILLAR_CAP.put(variant, REG.register("dungeon_pillar_cap" + suffix, BlockPillarCap::new, dungeonStoneProps()));
 
         BlockWithItemHolder<Block, BlockItem> brick1 = DUNGEON_BRICK_1.get(variant);
         BlockWithItemHolder<Block, BlockItem> polished = DUNGEON_POLISHED.get(variant);
