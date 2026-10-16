@@ -2,18 +2,23 @@ package com.breakinblocks.neovitae.gametest;
 
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import com.breakinblocks.neovitae.NeoVitae;
+import com.breakinblocks.neovitae.common.block.BlockShapedExplosive;
 import com.breakinblocks.neovitae.common.block.NVBlocks;
 import com.breakinblocks.neovitae.common.datacomponent.NVDataComponents;
 import com.breakinblocks.neovitae.common.datamap.NVDataMaps;
@@ -251,6 +256,36 @@ public final class DataValidationTests {
             });
         });
 
+        r.add("data/sanguine_blocks_and_mimics_drop_themselves", 30, helper -> {
+            List<Block> blocks = List.of(
+                    NVBlocks.SANGUINE_CRAFTER.block().get(),
+                    NVBlocks.SANGUINE_CASING.block().get(),
+                    NVBlocks.HELLFORGED_SANGUINE_CASING.block().get(),
+                    NVBlocks.SWIFT_SANGUINE_CASING.block().get(),
+                    NVBlocks.MIMIC.block().get(),
+                    NVBlocks.ETHEREAL_MIMIC.block().get());
+            for (Block block : blocks) {
+                List<ItemStack> drops = dropsWithPickaxe(helper, block);
+                if (drops.size() != 1 || !drops.get(0).is(block.asItem()) || drops.get(0).getCount() != 1) {
+                    helper.fail(BuiltInRegistries.BLOCK.getKey(block) + " should drop itself once, dropped " + drops);
+                    return;
+                }
+            }
+            helper.succeed();
+        });
+
+        r.add("data/charges_drop_nothing_from_loot", 30, helper -> {
+            for (Block block : BuiltInRegistries.BLOCK) {
+                if (!(block instanceof BlockShapedExplosive)) continue;
+                List<ItemStack> drops = dropsWithPickaxe(helper, block);
+                if (!drops.isEmpty()) {
+                    helper.fail(BuiltInRegistries.BLOCK.getKey(block) + " drops itself from code, its loot table must be empty, dropped " + drops);
+                    return;
+                }
+            }
+            helper.succeed();
+        });
+
         r.add("data/chest_loot_never_contains_spiritus_souls", 100, helper -> {
             helper.runAfterDelay(1, () -> {
                 ServerLevel level = helper.getLevel();
@@ -305,5 +340,13 @@ public final class DataValidationTests {
                 helper.succeed();
             });
         });
+    }
+
+    private static List<ItemStack> dropsWithPickaxe(GameTestHelper helper, Block block) {
+        BlockPos rel = new BlockPos(1, 1, 1);
+        helper.setBlock(rel, block.defaultBlockState());
+        BlockPos pos = helper.absolutePos(rel);
+        ServerLevel level = helper.getLevel();
+        return Block.getDrops(level.getBlockState(pos), level, pos, level.getBlockEntity(pos), null, new ItemStack(Items.NETHERITE_PICKAXE));
     }
 }

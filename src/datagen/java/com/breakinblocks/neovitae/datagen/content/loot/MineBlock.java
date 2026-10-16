@@ -19,6 +19,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePrope
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import com.breakinblocks.neovitae.common.block.NVBlocks;
 import com.breakinblocks.neovitae.common.item.NVItems;
+import com.breakinblocks.neovitae.common.block.BlockShapedExplosive;
 import com.breakinblocks.neovitae.common.block.BlockTau;
 import com.breakinblocks.neovitae.common.block.dungeon.DungeonBlocks;
 import com.breakinblocks.neovitae.util.helper.BlockWithItemHolder;
@@ -52,7 +53,7 @@ public class MineBlock extends BlockLootSubProvider {
 
         NVBlocks.BLOCKS.getEntries().forEach(holder -> {
             Block block = holder.get();
-            if (skipAuto.contains(block)) return;
+            if (skipAuto.contains(block) || block instanceof BlockShapedExplosive) return;
             dropSelfList.add(block);
         });
         DungeonBlocks.BLOCKS.getEntries().forEach(holder -> {
