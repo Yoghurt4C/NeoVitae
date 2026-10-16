@@ -133,32 +133,39 @@ public class OrbFillingLinkBlockEntity extends BaseBlockEntity {
     }
 
     public int getComparatorSignal() {
-        ItemStack orbStack = inv.getStackInSlot(ORB_SLOT);
-        if (!(orbStack.getItem() instanceof BloodOrbItem)) return 0;
-        Binding binding = orbStack.getOrDefault(NVDataComponents.BINDING, Binding.EMPTY);
-        if (binding.isEmpty()) return 0;
-        BloodOrb orb = orbStack.typeHolder().getData(NVDataMaps.BLOOD_ORB_STATS);
-        if (orb == null || orb.animaCapacity() <= 0) return 0;
-        Anima network = AnimaHelper.getAnima(binding.uuid());
-        return Mth.clamp((int) Math.ceil(15.0 * network.getCurrentEV() / orb.animaCapacity()), 0, 15);
+        int capacity = getAnimaCapacity();
+        if (capacity <= 0) return 0;
+        return Mth.clamp((int) Math.ceil(15.0 * getAnimaEV() / capacity), 0, 15);
     }
 
     public int getNetworkPercent() {
+        int capacity = getAnimaCapacity();
+        if (capacity <= 0) return 0;
+        return Mth.clamp((int) (100L * getAnimaEV() / capacity), 0, 100);
+    }
+
+    public int getAnimaEV() {
         ItemStack orbStack = inv.getStackInSlot(ORB_SLOT);
         if (!(orbStack.getItem() instanceof BloodOrbItem)) return 0;
         Binding binding = orbStack.getOrDefault(NVDataComponents.BINDING, Binding.EMPTY);
         if (binding.isEmpty()) return 0;
-        BloodOrb orb = orbStack.typeHolder().getData(NVDataMaps.BLOOD_ORB_STATS);
-        if (orb == null || orb.animaCapacity() <= 0) return 0;
         Anima network = AnimaHelper.getAnima(binding.uuid());
-        return Mth.clamp((int) (100L * network.getCurrentEV() / orb.animaCapacity()), 0, 100);
+        return network == null ? 0 : network.getCurrentEV();
+    }
+
+    public int getAnimaCapacity() {
+        ItemStack orbStack = inv.getStackInSlot(ORB_SLOT);
+        if (!(orbStack.getItem() instanceof BloodOrbItem)) return 0;
+        if (orbStack.getOrDefault(NVDataComponents.BINDING, Binding.EMPTY).isEmpty()) return 0;
+        BloodOrb orb = orbStack.typeHolder().getData(NVDataMaps.BLOOD_ORB_STATS);
+        return orb == null ? 0 : Math.max(0, orb.animaCapacity());
     }
 
     public boolean hasOrb() {
         return inv.getStackInSlot(ORB_SLOT).getItem() instanceof BloodOrbItem;
     }
 
-    private boolean isPowered() {
+    public boolean isPowered() {
         return level != null && level.hasNeighborSignal(worldPosition);
     }
 

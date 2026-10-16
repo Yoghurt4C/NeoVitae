@@ -61,6 +61,13 @@ repositories {
             includeGroup "dev.ftb.mods"
         }
     }
+    maven {
+        name = "SquidDev"
+        url = "https://maven.squiddev.cc"
+        content {
+            includeGroup "cc.tweaked"
+        }
+    }
 }
 
 base {
@@ -179,6 +186,9 @@ dependencies {
 
     compileOnly("maven.modrinth:apotheosis:${apotheosis_version}") {transitive=false}
     compileOnly("maven.modrinth:placebo:${placebo_version}") {transitive=false}
+
+    compileOnly("cc.tweaked:cc-tweaked-${mc_version}-core-api:${cct_version}")
+    compileOnly("cc.tweaked:cc-tweaked-${mc_version}-forge-api:${cct_version}")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

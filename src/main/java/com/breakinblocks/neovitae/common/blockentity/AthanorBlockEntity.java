@@ -208,6 +208,10 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider,
         return (int) (progress * 38);
     }
 
+    public double getProgress() {
+        return progress;
+    }
+
     public Map<SpiritusType, Double> getCurrentRecipeSpiritusCost() {
         return currentRecipeSpiritusCost;
     }
