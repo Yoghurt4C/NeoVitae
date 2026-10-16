@@ -37,7 +37,6 @@ import com.breakinblocks.neovitae.common.item.soul.SentientShovelItem;
 import com.breakinblocks.neovitae.common.item.soul.SentientSwordItem;
 import com.breakinblocks.neovitae.ritual.EnumRuneType;
 
-import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -177,18 +176,14 @@ public class NVItems {
     public static final DeferredHolder<Item, ItemAthanorToolBase> BASIC_CUTTING_FLUID = BASIC_ITEMS.registerItem("basic_cutting_fluid", props -> new ItemAthanorToolBase(props, 64, 1, SpiritusType.RUINA));
     public static final DeferredHolder<Item, ItemAthanorToolBase> INTERMEDIATE_CUTTING_FLUID = BASIC_ITEMS.registerItem("intermediate_cutting_fluid", props -> new ItemAthanorToolBase(props, 512, 1.5, SpiritusType.RUINA));
     public static final DeferredHolder<Item, ItemAthanorToolBase> ADVANCED_CUTTING_FLUID = BASIC_ITEMS.registerItem("advanced_cutting_fluid", props -> new ItemAthanorToolBase(props, 4096, 2, 2, SpiritusType.RUINA));
-    public static final DeferredHolder<Item, ItemAthanorToolBase> EXPLOSIVE_POWDER = BASIC_ITEMS.registerItem("explosive_powder", props -> new ItemAthanorToolBase(props, 64, 1, SpiritusType.NIHILUM));
     public static final DeferredHolder<Item, ItemAthanorToolBase> RESONATOR = BASIC_ITEMS.registerItem("resonator", props -> new ItemAthanorToolBase(props, 64, 1, SpiritusType.VINDICTA));
     public static final DeferredHolder<Item, NVGuideBookItem> GUIDE_BOOK = BASIC_ITEMS.registerItem("guide_book", NVGuideBookItem::new);
     public static final DeferredHolder<Item, ItemAthanorToolBase> SANGUINE_REVERTER = BASIC_ITEMS.registerItem("sanguine_reverter", props -> new ItemAthanorToolBase(props, 32, 2, SpiritusType.INVICTUS));
     public static final DeferredHolder<Item, ItemAthanorToolBase> PRIMITIVE_FURNACE_CELL = BASIC_ITEMS.registerItem("furnacecell_primitive", props -> new ItemAthanorToolBase(props, 128, 3));
-    public static final DeferredHolder<Item, ItemAthanorToolBase> PRIMITIVE_EXPLOSIVE_CELL = BASIC_ITEMS.registerItem("primitive_explosive_cell", props -> new ItemAthanorToolBase(props, 256, 1.5, SpiritusType.NIHILUM));
     public static final DeferredHolder<Item, ItemAthanorToolBase> PRIMITIVE_HYDRATION_CELL = BASIC_ITEMS.registerItem("primitive_hydration_cell", props -> new ItemAthanorToolBase(props, 128, 1.5));
     public static final DeferredHolder<Item, ItemAthanorToolBase> PRIMITIVE_CRYSTALLINE_RESONATOR = BASIC_ITEMS.registerItem("primitive_crystalline_resonator", props -> new ItemAthanorToolBase(props, 256, 1.5, SpiritusType.VINDICTA));
-    public static final DeferredHolder<Item, ItemAthanorToolBase> HELLFORGED_EXPLOSIVE_CELL = BASIC_ITEMS.registerItem("hellforged_explosive_cell", props -> new ItemAthanorToolBase(props, 1024, 2, SpiritusType.NIHILUM));
     public static final DeferredHolder<Item, ItemAthanorToolBase> HELLFORGED_RESONATOR = BASIC_ITEMS.registerItem("hellforged_resonator", props -> new ItemAthanorToolBase(props, 1024, 2, 2, SpiritusType.VINDICTA));
     public static final DeferredHolder<Item, ItemDeusAthanorTool> DEUS_CUTTING_FLUID = BASIC_ITEMS.registerItem("deus_cutting_fluid", props -> new ItemDeusAthanorTool(props, 2, 2, SpiritusType.RUINA));
-    public static final DeferredHolder<Item, ItemDeusAthanorTool> DEUS_EXPLOSIVE_CELL = BASIC_ITEMS.registerItem("deus_explosive_cell", props -> new ItemDeusAthanorTool(props, 2, 1, SpiritusType.NIHILUM));
     public static final DeferredHolder<Item, ItemDeusAthanorTool> DEUS_RESONATOR = BASIC_ITEMS.registerItem("deus_resonator", props -> new ItemDeusAthanorTool(props, 2, 2, SpiritusType.VINDICTA));
     public static final DeferredHolder<Item, ItemDeusAthanorTool> DEUS_HYDRATION_CELL = BASIC_ITEMS.registerItem("deus_hydration_cell", props -> new ItemDeusAthanorTool(props, 1.5, 1, SpiritusType.RAW));
     public static final DeferredHolder<Item, ItemDeusAthanorTool> DEUS_REVERTER = BASIC_ITEMS.registerItem("deus_reverter", props -> new ItemDeusAthanorTool(props, 2, 1, SpiritusType.INVICTUS));
@@ -457,10 +452,6 @@ public class NVItems {
     public static final DeferredHolder<Item, ArrayEffectItem> ARRAY_LIQUIFIED_EXPERIENCE = ARRAY_ITEMS.registerItem("array_liquified_experience", props -> new ArrayEffectItem(props, AlchemyArrayEffectType.LIQUIFIED_EXPERIENCE));
     public static final DeferredHolder<Item, ArrayEffectItem> ARRAY_MINER = ARRAY_ITEMS.registerItem("array_miner", props -> new ArrayEffectItem(props, AlchemyArrayEffectType.MINER));
     public static final DeferredHolder<Item, ArrayEffectItem> ARRAY_ENDER_SEVER = ARRAY_ITEMS.registerItem("array_ender_sever", props -> new ArrayEffectItem(props, AlchemyArrayEffectType.ENDER_SEVER));
-
-    public static List<Item> retiredItems() {
-        return List.of(EXPLOSIVE_POWDER.get(), PRIMITIVE_EXPLOSIVE_CELL.get(), HELLFORGED_EXPLOSIVE_CELL.get(), DEUS_EXPLOSIVE_CELL.get());
-    }
 
     public static void register(IEventBus modBus) {
         BASIC_ITEMS.register(modBus);
