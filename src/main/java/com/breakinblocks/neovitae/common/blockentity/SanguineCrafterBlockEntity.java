@@ -639,7 +639,7 @@ public class SanguineCrafterBlockEntity extends BaseBlockEntity implements MenuP
             if (remainder != null) byproducts.add(remainder.create());
         }
         int ticks = scaledTicks(Math.max(1, recipe.getTicks()));
-        return finish(new Plan(result, byproducts, consumes, recipe.getSyphon(), network, 0, false, Mode.TABULA, ticks, null));
+        return finish(new Plan(result, byproducts, consumes, recipe.getSyphon(), network, 0, false, Mode.TABULA, ticks, items.toArray(new ItemStack[0])));
     }
 
     @Nullable
@@ -775,7 +775,9 @@ public class SanguineCrafterBlockEntity extends BaseBlockEntity implements MenuP
     private void execute(ServerLevel level, Plan plan) {
         ItemStack result = plan.result();
         if (plan.eventInputs() != null) {
-            NeoVitaeCraftedEvent.Forge event = new NeoVitaeCraftedEvent.Forge(result, plan.eventInputs());
+            NeoVitaeCraftedEvent event = plan.shardMode() == Mode.TABULA
+                    ? new NeoVitaeCraftedEvent.AlchemyTable(result, plan.eventInputs())
+                    : new NeoVitaeCraftedEvent.Forge(result, plan.eventInputs());
             NeoForge.EVENT_BUS.post(event);
             result = event.getOutput();
         }

@@ -20,11 +20,13 @@ import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.Nullable;
 import com.breakinblocks.neovitae.common.datacomponent.NVDataComponents;
+import com.breakinblocks.neovitae.common.event.NeoVitaeCraftedEvent;
 import com.breakinblocks.neovitae.common.tag.NVTags;
 import com.breakinblocks.neovitae.common.datacomponent.Binding;
 import com.breakinblocks.neovitae.common.datacomponent.Anima;
@@ -441,12 +443,14 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
         }
 
         List<Ingredient> ingredients = new ArrayList<>(recipe.getInput());
+        List<ItemStack> consumed = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack.isEmpty()) continue;
 
             for (int j = 0; j < ingredients.size(); j++) {
                 if (ingredients.get(j).test(stack)) {
+                    consumed.add(stack.copyWithCount(1));
                     if (i == cuttingFluidSlot) {
                         damageCuttingFluid(i, stack);
                     } else {
@@ -458,7 +462,9 @@ public class TabulaVitaeBlockEntity extends BaseBlockEntity implements MenuProvi
             }
         }
 
-        ItemStack output = recipe.getOutput().copy();
+        NeoVitaeCraftedEvent.AlchemyTable event = new NeoVitaeCraftedEvent.AlchemyTable(recipe.getOutput().copy(), consumed.toArray(new ItemStack[0]));
+        NeoForge.EVENT_BUS.post(event);
+        ItemStack output = event.getOutput();
         if (bonusOutputChance > 0 && Math.random() < bonusOutputChance) {
             output.grow(1);
         }
