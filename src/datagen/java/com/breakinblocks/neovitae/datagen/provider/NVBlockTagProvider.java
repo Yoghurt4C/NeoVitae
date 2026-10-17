@@ -87,7 +87,8 @@ public class NVBlockTagProvider extends BlockTagsProvider {
                 .addTag(NVTags.Blocks.ORES_HELLFORGED);
 
         this.tag(BlockTags.BEACON_BASE_BLOCKS)
-                .addAll(BlockGroups.HELLFORGED_BLOCK);
+                .addAll(BlockGroups.HELLFORGED_BLOCK)
+                .add(NVBlocks.SANGUINE_DEUS_BLOCK.block().get());
 
         this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(NVBlocks.ARA_VITAE.block().get(), NVBlocks.BLOOD_TANK.block().get())
@@ -185,6 +186,7 @@ public class NVBlockTagProvider extends BlockTagsProvider {
         this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .addAll(BlockGroups.BLOODSTONE)
                 .addAll(BlockGroups.HELLFORGED_BLOCK)
+                .add(NVBlocks.SANGUINE_DEUS_BLOCK.block().get())
                 .addAll(BlockGroups.CRYSTAL_CLUSTER)
                 .addAll(BlockGroups.RUNE_T1)
                 .addAll(BlockGroups.RUNE_T2);
@@ -196,6 +198,7 @@ public class NVBlockTagProvider extends BlockTagsProvider {
 
         this.tag(BlockTags.NEEDS_IRON_TOOL)
                 .addAll(BlockGroups.HELLFORGED_BLOCK)
+                .add(NVBlocks.SANGUINE_DEUS_BLOCK.block().get())
                 .add(NVBlocks.RAW_DEMONITE_BLOCK.block().get());
 
         this.tag(BlockTags.MINEABLE_WITH_PICKAXE)

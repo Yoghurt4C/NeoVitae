@@ -121,6 +121,7 @@ public class NVBlocks {
         return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5, 6).sound(SoundType.METAL).requiresCorrectToolForDrops();
     }
     public static final BlockWithItemHolder<Block, BlockItem> HELLFORGED_BLOCK = BASIC_REG.register("hellforged_block", metal_block_properties_src(), new Item.Properties());
+    public static final BlockWithItemHolder<Block, BlockItem> SANGUINE_DEUS_BLOCK = BASIC_REG.register("sanguine_deus_block", metal_block_properties_src(), new Item.Properties());
     public static final BlockWithItemHolder<Block, BlockItem> RAW_DEMONITE_BLOCK = BASIC_REG.register("raw_demonite_block", metal_block_properties_src(), new Item.Properties());
 
     public static final BlockWithItemHolder<EnchantingPowerBlock, BlockItem> CRYSTAL_CLUSTER = BASIC_REG.register("crystal_cluster", props -> new EnchantingPowerBlock(props, 15F), rune_properties_src(), rune_item_properties_src());
