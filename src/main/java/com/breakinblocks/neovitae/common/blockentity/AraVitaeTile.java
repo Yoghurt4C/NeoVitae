@@ -110,6 +110,7 @@ public class AraVitaeTile extends BaseBlockEntity implements IAraVitae, GeoBlock
     private int outputTank = 0;
     private int mainTank = 0;
     private int chargingTank = 0;
+    private int reserveTank = 0;
     private volatile boolean isSignaling = false;
     private boolean orbDepleted = false;
 
@@ -351,6 +352,8 @@ public class AraVitaeTile extends BaseBlockEntity implements IAraVitae, GeoBlock
             tile.tickFluidTransfer();
         }
 
+        tile.tickReserve();
+
         // Ambient blood drip when altar has LP
         if (tile.getMainTank() > 0 && tile.getTicks() % 10 == 0) {
             ((ServerLevel) level).sendParticles(
@@ -406,6 +409,7 @@ public class AraVitaeTile extends BaseBlockEntity implements IAraVitae, GeoBlock
             setInputTank(Math.min(getInputTank(), newIOCapacity));
             setOutputTank(Math.min(getOutputTank(), newIOCapacity));
             setChargingTank(Math.min(getChargingTank(), newChargingCapacity));
+            setReserveTank(Math.min(getReserveTank(), getReserveCapacity()));
         }
 
         setChanged();
@@ -798,7 +802,22 @@ public class AraVitaeTile extends BaseBlockEntity implements IAraVitae, GeoBlock
     }
 
     public void addSacrificeEV(int evAdded, boolean isSacrifice) {
-        setMainTank(getMainTank() + Math.min((getMainCapacity() - getMainTank()), (int) ((isSacrifice ? 1 + modifiers.getSacrificeMod() : 1 + modifiers.getSelfSacrificeMod()) * evAdded)));
+        int total = (int) ((isSacrifice ? 1 + modifiers.getSacrificeMod() : 1 + modifiers.getSelfSacrificeMod()) * evAdded);
+        int toMain = Math.max(0, Math.min(getMainCapacity() - getMainTank(), total));
+        setMainTank(getMainTank() + toMain);
+        int overflow = total - toMain;
+        if (overflow > 0) {
+            setReserveTank((int) Math.min((long) getReserveTank() + overflow, getReserveCapacity()));
+        }
+        setChanged();
+    }
+
+    private void tickReserve() {
+        if (getReserveTank() <= 0) return;
+        int moved = Math.min(getReserveTank(), getMainCapacity() - getMainTank());
+        if (moved <= 0) return;
+        setReserveTank(getReserveTank() - moved);
+        setMainTank(getMainTank() + moved);
         setChanged();
     }
 
@@ -860,6 +879,10 @@ public class AraVitaeTile extends BaseBlockEntity implements IAraVitae, GeoBlock
         return (int) ((float) FluidType.BUCKET_VOLUME * modifiers.getChargeCapacityMod());
     }
 
+    public int getReserveCapacity() {
+        return (int) Math.min((long) getMainCapacity() * AltarConstants.RESERVE_CAPACITY_FACTOR, Integer.MAX_VALUE);
+    }
+
     @Override
     protected void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
@@ -884,6 +907,7 @@ public class AraVitaeTile extends BaseBlockEntity implements IAraVitae, GeoBlock
         outputTank = tanks.getIntOr("output", 0);
         mainTank = tanks.getIntOr("main", 0);
         chargingTank = tanks.getIntOr("charging", 0);
+        reserveTank = tanks.getIntOr("reserve", 0);
         progress = tanks.getIntOr("progress", 0);
         syncedRequired = tanks.getIntOr("craftRequired", 0);
         syncedConsumption = tanks.getIntOr("craftConsumption", 0);
@@ -920,6 +944,7 @@ public class AraVitaeTile extends BaseBlockEntity implements IAraVitae, GeoBlock
         tanks.putInt("output", outputTank);
         tanks.putInt("main", mainTank);
         tanks.putInt("charging", chargingTank);
+        tanks.putInt("reserve", reserveTank);
         tanks.putInt("progress", progress);
         tanks.putInt("craftRequired", syncedRequired);
         tanks.putInt("craftConsumption", syncedConsumption);
@@ -948,6 +973,7 @@ public class AraVitaeTile extends BaseBlockEntity implements IAraVitae, GeoBlock
     public int getOutputTank() { return outputTank; }
     public int getMainTank() { return mainTank; }
     public int getChargingTank() { return chargingTank; }
+    public int getReserveTank() { return reserveTank; }
     public boolean isSignaling() { return isSignaling; }
     public int getCapacityGraceTicks() { return capacityGraceTicks; }
     public int getPreviousMainCapacity() { return previousMainCapacity; }
@@ -979,6 +1005,7 @@ public class AraVitaeTile extends BaseBlockEntity implements IAraVitae, GeoBlock
     private void setInputTank(int inputTank) { this.inputTank = inputTank; }
     private void setOutputTank(int outputTank) { this.outputTank = outputTank; }
     private void setChargingTank(int chargingTank) { this.chargingTank = chargingTank; }
+    private void setReserveTank(int reserveTank) { this.reserveTank = reserveTank; }
     private void setProgress(int progress) { this.progress = progress; }
     private void setCurrentRecipe(AraVitaeRecipe recipe) { this.currentRecipe = recipe; }
     public void setActive(boolean active) { this.isActive = active; }

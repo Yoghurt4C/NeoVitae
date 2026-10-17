@@ -71,6 +71,8 @@ public enum NVBlockDataProvider implements IServerDataProvider<BlockAccessor> {
             data.putInt("altar_tier", altar.getTier());
             data.putInt("altar_ev", altar.getMainTank());
             data.putInt("altar_capacity", altar.getMainCapacity());
+            data.putInt("altar_reserve", altar.getReserveTank());
+            data.putInt("altar_reserve_capacity", altar.getReserveCapacity());
             data.putBoolean("altar_active", altar.isActive());
         }
 

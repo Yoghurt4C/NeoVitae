@@ -111,6 +111,56 @@ public final class SacrificeTests {
             });
         });
 
+        r.add("sacrifice/overflow_goes_to_reserve_and_refills_basin", 40, helper -> {
+            AraVitaeTile altar = placeAltar(helper, new BlockPos(3, 1, 2));
+
+            helper.runAfterDelay(3, () -> {
+                if (altar == null) return;
+                int capacity = altar.getMainCapacity();
+                if (capacity <= 0) {
+                    helper.fail("Altar capacity should be positive, got " + capacity);
+                    return;
+                }
+                altar.drainMainTank(altar.getMainTank());
+                altar.addSacrificeEV(capacity * 3, true);
+                if (altar.getMainTank() != capacity) {
+                    helper.fail("Main tank should be full at " + capacity + ", got " + altar.getMainTank());
+                    return;
+                }
+                int reserve = altar.getReserveTank();
+                if (reserve < capacity * 2) {
+                    helper.fail("Reserve should hold at least the overflow " + (capacity * 2) + ", got " + reserve);
+                    return;
+                }
+                altar.drainMainTank(capacity);
+                helper.runAfterDelay(2, () -> {
+                    if (altar.getMainTank() != capacity) {
+                        helper.fail("Reserve should refill the basin to " + capacity + ", got " + altar.getMainTank());
+                        return;
+                    }
+                    if (altar.getReserveTank() > reserve - capacity) {
+                        helper.fail("Reserve should drop to at most " + (reserve - capacity) + ", got " + altar.getReserveTank());
+                        return;
+                    }
+                    helper.succeed();
+                });
+            });
+        });
+
+        r.add("sacrifice/reserve_respects_capacity", 30, helper -> {
+            AraVitaeTile altar = placeAltar(helper, new BlockPos(3, 1, 2));
+
+            helper.runAfterDelay(3, () -> {
+                if (altar == null) return;
+                altar.addSacrificeEV(Integer.MAX_VALUE, true);
+                if (altar.getReserveTank() != altar.getReserveCapacity()) {
+                    helper.fail("Reserve " + altar.getReserveTank() + " should cap at " + altar.getReserveCapacity());
+                    return;
+                }
+                helper.succeed();
+            });
+        });
+
         r.add("sacrifice/cow_has_sacrifice_value", 60, helper -> {
             BlockPos pos = new BlockPos(3, 1, 2);
             helper.setBlock(new BlockPos(3, 0, 2), Blocks.STONE.defaultBlockState());

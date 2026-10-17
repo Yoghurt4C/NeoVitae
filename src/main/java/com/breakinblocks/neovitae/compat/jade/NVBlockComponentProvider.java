@@ -56,6 +56,10 @@ public enum NVBlockComponentProvider implements IBlockComponentProvider {
             if (data.getBooleanOr("altar_active", false)) {
                 tooltip.add(Component.translatable("jade.neovitae.crafting").withStyle(ChatFormatting.GREEN));
             }
+            int reserve = data.getIntOr("altar_reserve", 0);
+            if (reserve > 0) {
+                tooltip.add(Component.translatable("hud.neovitae.altar.reserve", FORMAT.format(reserve), FORMAT.format(data.getIntOr("altar_reserve_capacity", 0))).withStyle(ChatFormatting.DARK_RED));
+            }
         }
 
         if (data.contains("ritual_name")) {
