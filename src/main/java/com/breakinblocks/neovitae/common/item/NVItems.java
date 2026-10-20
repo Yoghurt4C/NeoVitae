@@ -98,6 +98,7 @@ public class NVItems {
     public static final DeferredHolder<Item, Item> TABULA_SPIRITUS = plainItem("tabula_spiritus");
     public static final DeferredHolder<Item, Item> TABULA_AETHEREA = plainItem("tabula_aetherea");
     public static final DeferredHolder<Item, Item> PRISMATIC_SPIRITUS_GEM = BASIC_ITEMS.registerItem("prismatic_spiritus_gem", props -> new Item(props.rarity(Rarity.EPIC).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final DeferredHolder<Item, Item> DEUS_SHARD = BASIC_ITEMS.registerItem("deus_shard", props -> new Item(props.rarity(Rarity.EPIC)));
 
     public static final DeferredHolder<Item, SigilItem> SIGIL_DIVINATION = BASIC_ITEMS.registerItem("sigil_divination", props -> new SigilItem(props, SigilTypeRegistry.key("divination")));
     public static final DeferredHolder<Item, SigilItem> SIGIL_SEER = BASIC_ITEMS.registerItem("sigil_seer", props -> new SigilItem(props, SigilTypeRegistry.key("seer")));
@@ -255,6 +256,7 @@ public class NVItems {
     public static final DeferredHolder<Item, Item> ECTOPLASMIC_RESIDUE = plainItem("ectoplasmic_residue");
     public static final DeferredHolder<Item, Item> ANIMUS_MOTE = plainItem("animus_mote");
     public static final DeferredHolder<Item, Item> REVENANT_PLATE = plainItem("revenant_plate");
+    public static final DeferredHolder<Item, Item> REVENANT_PLATING = plainItem("revenant_plating");
     public static final DeferredHolder<Item, Item> FROZEN_MARROW_SHARD = plainItem("frozen_marrow_shard");
     public static final DeferredHolder<Item, Item> CINDER_HEART_FRAGMENT = plainItem("cinder_heart_fragment");
     public static final DeferredHolder<Item, Item> PERMAFROST_CORE = plainItem("permafrost_core");

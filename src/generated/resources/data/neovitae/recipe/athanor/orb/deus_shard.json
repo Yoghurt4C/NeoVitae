@@ -1,0 +1,27 @@
+{
+  "type": "neovitae:athanor",
+  "guaranteed_outputs": [
+    {
+      "id": "neovitae:deus_shard"
+    }
+  ],
+  "input_fluid": {
+    "amount": 10000,
+    "ingredient": "neovitae:essentia_vitae_source"
+  },
+  "inputs": [
+    "neovitae:revenant_plating",
+    "neovitae:revenant_plating",
+    "neovitae:revenant_plating",
+    "neovitae:revenant_plating",
+    "minecraft:nether_star"
+  ],
+  "spiritus_costs": {
+    "invictus": 20.0,
+    "nihilum": 20.0,
+    "raw": 20.0,
+    "ruina": 20.0,
+    "vindicta": 20.0
+  },
+  "tool": "#neovitae:athanor_tool/orb"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "neovitae:athanor_recipe",
+  "condition": {
+    "type": "modonomicon:none"
+  },
+  "id": "deus_shard_recipe",
+  "recipe_id_1": "neovitae:athanor/orb/deus_shard",
+  "sort_number": 4
+}

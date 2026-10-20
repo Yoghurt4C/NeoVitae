@@ -46,6 +46,7 @@ public class NVGameTestRegistration {
         SpiritusRoutingTests.register(r);
         SpiritusTests.register(r);
         TabulaVitaeTests.register(r);
+        UnboundedFlightTests.register(r);
         VasMaleficumTests.register(r);
         EnchantedVitaeTests.register(r);
         EnchantedVitaeHaltTests.register(r);

@@ -67,6 +67,7 @@ public class SentientUpgrades {
     public static final ResourceKey<SentientUpgrade> SELF_SACRIFICE = key("self_sacrifice");
     public static final ResourceKey<SentientUpgrade> SPEED = key("speed");
     public static final ResourceKey<SentientUpgrade> SPRINT_ATTACK = key("sprint_attack");
+    public static final ResourceKey<SentientUpgrade> UNBOUNDED_FLIGHT = key("unbounded_flight");
 
     public static final ResourceKey<SentientUpgrade> LUCK = key("luck");
 
@@ -479,6 +480,14 @@ public class SentientUpgrades {
                         .withEffect(SentientEffectComponents.KNOCKBACK.get(), new AddValue(LevelBasedValue.perLevel(1)))
                         .build()
         );
+        context.register(
+                UNBOUNDED_FLIGHT,
+                new SentientUpgrade.Builder()
+                        .level(1, 20)
+                        .withEffect(SentientEffectComponents.ATTRIBUTES.get(), new AttributeEffect(UNBOUNDED_FLIGHT.identifier(), NeoForgeMod.CREATIVE_FLIGHT, Operation.ADD_VALUE, LevelBasedValue.constant(1f)))
+                        .withEffect(SentientEffectComponents.UNBOUNDED_FLIGHT.get())
+                        .build()
+        );
 
         context.register(
                 LUCK, // Added to chests/mines/decent_loot.json loot table
@@ -641,7 +650,8 @@ public class SentientUpgrades {
             FALL_PROTECT,      // Soft Fall
             JUMP,              // Strong Legs
             PHYSICAL_PROTECT,  // Tough
-            SELF_SACRIFICE     // Tough Palms
+            SELF_SACRIFICE,    // Tough Palms
+            UNBOUNDED_FLIGHT   // Unbounded Flight
     );
 
     public static void tags(Function<TagKey<SentientUpgrade>, TagAppender<ResourceKey<SentientUpgrade>, SentientUpgrade>> adder) {
@@ -663,6 +673,9 @@ public class SentientUpgrades {
 
         adder.apply(NVTags.Sentient.TOOLTIP_HIDE)
                 .addTag(NVTags.Sentient.TRAINERS);
+
+        adder.apply(NVTags.Sentient.REQUIRES_FULL_EVOLUTION)
+                .add(UNBOUNDED_FLIGHT);
     }
 
     public static void translations(BiConsumer<String, String> translator) {
@@ -698,6 +711,8 @@ public class SentientUpgrades {
         addUpgrade(SPEED.identifier(), "Quick Feet", translator);
         addUpgrade(SPRINT_ATTACK.identifier(), "Charging Strike", translator);
         addUpgrade(CURIOS_SOCKET.identifier(), "Curios Sockets", translator);
+        translator.accept("sentient_upgrade.%s.%s".formatted(UNBOUNDED_FLIGHT.identifier().getNamespace(), UNBOUNDED_FLIGHT.identifier().getPath()), "Unbounded Flight");
+        translator.accept("item.%s.upgrade_tome.%s".formatted(UNBOUNDED_FLIGHT.identifier().getNamespace(), UNBOUNDED_FLIGHT.identifier().getPath()), "Tome of Unbounded Flight");
     }
 
     private static void addUpgrade(Identifier key, String translated, BiConsumer<String, String> translator) {

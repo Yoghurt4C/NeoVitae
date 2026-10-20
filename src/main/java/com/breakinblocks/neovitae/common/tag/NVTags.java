@@ -229,6 +229,7 @@ public class NVTags {
         public static final TagKey<SentientUpgrade> TRAINERS = tag(bm("trainer"));
         public static final TagKey<SentientUpgrade> IS_SCRAPPABLE = tag(bm("is_scrappable"));
         public static final TagKey<SentientUpgrade> SENTIENT_BLACKLIST = tag(bm("sentient_blacklist"));
+        public static final TagKey<SentientUpgrade> REQUIRES_FULL_EVOLUTION = tag(bm("requires_full_evolution"));
 
         private static TagKey<SentientUpgrade> tag(Identifier id) {
             return TagKey.create(NVRegistries.Keys.SENTIENT_UPGRADES, id);

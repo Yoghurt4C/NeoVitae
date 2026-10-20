@@ -1,0 +1,9 @@
+{
+  "type": "modonomicon:crafting_recipe",
+  "condition": {
+    "type": "modonomicon:none"
+  },
+  "id": "plating_recipe",
+  "recipe_id_1": "neovitae:revenant_plating",
+  "sort_number": 3
+}

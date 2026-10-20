@@ -573,6 +573,7 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         add(NVItems.ECTOPLASMIC_RESIDUE.get(), "Ectoplasmic Residue");
         add(NVItems.ANIMUS_MOTE.get(), "Animus Mote");
         add(NVItems.REVENANT_PLATE.get(), "Revenant Plate");
+        add(NVItems.REVENANT_PLATING.get(), "Revenant Plating");
         add(NVItems.FROZEN_MARROW_SHARD.get(), "Frozen Marrow Shard");
         add(NVItems.CINDER_HEART_FRAGMENT.get(), "Cinder Heart Fragment");
         add(NVItems.PERMAFROST_CORE.get(), "Permafrost Core");
@@ -1022,6 +1023,7 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         add(NVItems.DEUS_HYDRATION_CELL.get(), "Deus Hydration Cell");
         add(NVItems.DEUS_REVERTER.get(), "Deus Reverter");
         add(NVItems.PRISMATIC_SPIRITUS_GEM.get(), "Prismatic Spiritus Gem");
+        add(NVItems.DEUS_SHARD.get(), "Deus Shard");
         add(NVItems.GUIDE_BOOK.get(), "Scriptura Vitae");
 
 
@@ -1262,6 +1264,8 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         addTooltip("currentOwner", "Bound to: %s");
 
         add("chat.neovitae.sentient_upgrade.level_up", "%s has levelled up to %s!");
+        add("chat.neovitae.sentient_upgrade.unevolved", "Your Sentient Armor rejects this tome. It must first complete both the Ritual of Sentient Evolution and the Deus Sentient Evolution.");
+        add("chat.neovitae.unbounded_flight.no_ev", "Your soul network is too weak to keep you aloft.");
         add("chat.neovitae.armour_evolve.evolved", "The armor evolves; it can now hold %s Upgrade Points.");
         add("chat.neovitae.armour_evolve.maxed", "The armor has evolved as far as this circle can take it.");
         add("chat.neovitae.deus_armour_evolve.evolved", "The armor ascends; it can now hold %s Upgrade Points, and every piece is bound with Blood Mending.");
@@ -1815,7 +1819,7 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         add("gui.neovitae.routing.face_mode.cycle", "Shift-click to cycle backwards");
         add("gui.neovitae.routing.spiritus_aspect", "Spiritus aspect this node exports");
         add("gui.neovitae.routing.spiritus_aspect.desc", "Applies to the whole node, not one side");
-        add("gui.neovitae.routing.spiritus_reserve", "Amount to leave behind in the source");
+        add("gui.neovitae.routing.spiritus_reserve", "Level to keep this chunk's Spiritus at");
         add("gui.neovitae.routing.spiritus_reserve.hint", "Shift for steps of 100");
         add("gui.neovitae.routing.filter.energy_desc", "Energy: per-side on/off");
         add("gui.neovitae.routing.filter.spiritus_desc", "Spiritus: aspect and reserve");

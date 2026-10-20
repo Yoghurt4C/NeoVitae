@@ -34,6 +34,13 @@ public class UpgradeTomeItem extends Item {
             return InteractionResult.PASS;
         }
 
+        if (!SentientHelper.meetsEvolutionRequirement(SentientHelper.getChest(player), tome.upgrade())) {
+            if (!level.isClientSide()) {
+                player.sendOverlayMessage(Component.translatable("chat." + NeoVitae.MODID + ".sentient_upgrade.unevolved"));
+            }
+            return InteractionResult.FAIL;
+        }
+
         XpFunc expAdder = SentientHelper::applyExp;
         if (player.isShiftKeyDown()) {
             expAdder = SentientHelper::applyExpToCap;

@@ -1,0 +1,11 @@
+{
+  "type": "modonomicon:text",
+  "condition": {
+    "type": "modonomicon:none"
+  },
+  "id": "deus_shard",
+  "show_title_separator": true,
+  "sort_number": 2,
+  "text": "book.neovitae.guide.alchemy_arrays.upgrade_unbounded_flight.deus_shard.text",
+  "title": ""
+}
