@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
+import net.neoforged.neoforge.network.IContainerFactory;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
@@ -21,6 +22,7 @@ import net.neoforged.neoforge.common.world.chunk.TicketController;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import com.breakinblocks.neovitae.NeoVitae;
+import com.breakinblocks.neovitae.mixin.MenuTypeAccessor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +40,9 @@ public final class BoundTreasureLeases {
             (level, helper) -> helper.getEntityTickets().keySet().forEach(helper::removeAllTickets));
 
     private static final Map<UUID, Lease> LEASES = new HashMap<>();
+
+    private static boolean guardingRemoteOpen;
+    private static boolean blockedRemoteOpen;
 
     private BoundTreasureLeases() {
     }
@@ -63,6 +68,28 @@ public final class BoundTreasureLeases {
         }
         return level.getBlockEntity(pos) != null
                 && level.getCapability(Capabilities.Item.BLOCK, pos, null) != null;
+    }
+
+    public static void beginRemoteOpen(ServerPlayer player, ServerLevel level, BlockPos pos) {
+        guardingRemoteOpen = player.level() != level
+                || !player.getChunkTrackingView().contains(ChunkPos.containing(pos));
+        blockedRemoteOpen = false;
+    }
+
+    public static boolean endRemoteOpen() {
+        boolean blocked = blockedRemoteOpen;
+        guardingRemoteOpen = false;
+        blockedRemoteOpen = false;
+        return blocked;
+    }
+
+    public static boolean shouldBlockMenu(AbstractContainerMenu menu) {
+        if (!guardingRemoteOpen) return false;
+        if (((MenuTypeAccessor) menu.getType()).neovitae$getConstructor() instanceof IContainerFactory<?>) {
+            blockedRemoteOpen = true;
+            return true;
+        }
+        return false;
     }
 
     public static void open(ServerPlayer player, ServerLevel level, BlockPos pos) {

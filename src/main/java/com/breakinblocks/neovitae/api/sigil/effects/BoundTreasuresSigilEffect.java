@@ -96,9 +96,22 @@ public record BoundTreasuresSigilEffect() implements SigilEffect {
 
         MenuProvider menuProvider = BoundTreasureLeases.findMenuProvider(targetLevel, chestPos);
         if (menuProvider != null) {
-            serverPlayer.openMenu(menuProvider, chestPos);
-            BoundTreasureLeases.open(serverPlayer, targetLevel, chestPos);
-            return true;
+            BoundTreasureLeases.beginRemoteOpen(serverPlayer, targetLevel, chestPos);
+            boolean opened;
+            boolean blocked;
+            try {
+                opened = serverPlayer.openMenu(menuProvider, chestPos).isPresent();
+            } finally {
+                blocked = BoundTreasureLeases.endRemoteOpen();
+            }
+            if (blocked) {
+                player.sendOverlayMessage(Component.translatable("tooltip.neovitae.bound_treasures.too_far"));
+                return false;
+            }
+            if (opened) {
+                BoundTreasureLeases.open(serverPlayer, targetLevel, chestPos);
+                return true;
+            }
         }
 
         Direction boundSide = stack.get(NVDataComponents.BOUND_TREASURE_SIDE.get());
@@ -110,10 +123,20 @@ public record BoundTreasuresSigilEffect() implements SigilEffect {
         if (BoundTreasureLeases.isContainer(targetLevel, chestPos)) {
             BlockState state = targetLevel.getBlockState(chestPos);
             BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(chestPos), Direction.UP, chestPos, false);
-            InteractionResult withItem = state.useItemOn(ItemStack.EMPTY, targetLevel, serverPlayer,
-                    InteractionHand.MAIN_HAND, hit);
-            if (withItem instanceof InteractionResult.TryEmptyHandInteraction) {
-                state.useWithoutItem(targetLevel, serverPlayer, hit);
+            BoundTreasureLeases.beginRemoteOpen(serverPlayer, targetLevel, chestPos);
+            boolean blocked;
+            try {
+                InteractionResult withItem = state.useItemOn(ItemStack.EMPTY, targetLevel, serverPlayer,
+                        InteractionHand.MAIN_HAND, hit);
+                if (withItem instanceof InteractionResult.TryEmptyHandInteraction) {
+                    state.useWithoutItem(targetLevel, serverPlayer, hit);
+                }
+            } finally {
+                blocked = BoundTreasureLeases.endRemoteOpen();
+            }
+            if (blocked) {
+                player.sendOverlayMessage(Component.translatable("tooltip.neovitae.bound_treasures.too_far"));
+                return false;
             }
             if (serverPlayer.containerMenu != serverPlayer.inventoryMenu) {
                 BoundTreasureLeases.open(serverPlayer, targetLevel, chestPos);

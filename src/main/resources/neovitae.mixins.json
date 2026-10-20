@@ -8,6 +8,7 @@
     "BaseSpawnerMixin",
     "BlockItemMixin",
     "LevelMixin",
+    "MenuTypeAccessor",
     "ServerPlayerMixin",
     "SignalGetterMixin",
     "TrialSpawnerMixin"
