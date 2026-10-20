@@ -24,6 +24,7 @@ import com.breakinblocks.neovitae.common.blockentity.routing.InputRoutingNodeBlo
 import com.breakinblocks.neovitae.common.blockentity.routing.MasterRoutingNodeBlockEntity;
 import com.breakinblocks.neovitae.common.blockentity.routing.OutputRoutingNodeBlockEntity;
 import com.breakinblocks.neovitae.common.blockentity.routing.RoutingConduitBlockEntity;
+import com.breakinblocks.neovitae.common.blockentity.routing.RoutingNodeBlockEntity;
 import com.breakinblocks.neovitae.common.fluid.NVFluids;
 import com.breakinblocks.neovitae.common.routing.FilterMode;
 import com.breakinblocks.neovitae.common.routing.SideFilterConfig;
@@ -31,6 +32,7 @@ import com.breakinblocks.neovitae.gametest.base.NVTestRegistrar;
 
 import java.lang.reflect.Field;
 import java.util.LinkedList;
+import java.util.List;
 
 public final class RoutingNodeTests {
 
@@ -181,6 +183,44 @@ public final class RoutingNodeTests {
                 if (dstCount != 64) helper.fail("Destination has " + dstCount + " iron ingots, expected 64");
                 helper.succeed();
             });
+        });
+
+        r.add("routing/master_unlink_detaches_network", 60, helper -> {
+            RoutingTestContext ctx = setupLinearNetwork(helper);
+            MasterRoutingNodeBlockEntity master = helper.getBlockEntity(ctx.master(), MasterRoutingNodeBlockEntity.class);
+            InputRoutingNodeBlockEntity input = helper.getBlockEntity(ctx.input(), InputRoutingNodeBlockEntity.class);
+            OutputRoutingNodeBlockEntity output = helper.getBlockEntity(ctx.output(), OutputRoutingNodeBlockEntity.class);
+
+            master.unlinkNetwork();
+
+            helper.assertTrue(master.getConnected().isEmpty(), "The master should have no links left");
+            for (RoutingNodeBlockEntity node : List.of(input, output)) {
+                helper.assertTrue(node.getMasterPos().equals(BlockPos.ZERO), "A detached node should forget its master");
+                helper.assertTrue(node.getConnected().isEmpty(), "A detached node should have no links left");
+            }
+
+            BlockPos absInput = helper.absolutePos(ctx.input());
+            input.onLoad();
+            input.tick(helper.getLevel(), absInput, helper.getLevel().getBlockState(absInput));
+            helper.assertTrue(input.getMasterPos().equals(BlockPos.ZERO),
+                    "An unlinked node must not auto-bind back to the master when it reloads");
+            helper.succeed();
+        });
+
+        r.add("routing/relinking_lifts_unlink", 60, helper -> {
+            RoutingTestContext ctx = setupLinearNetwork(helper);
+            MasterRoutingNodeBlockEntity master = helper.getBlockEntity(ctx.master(), MasterRoutingNodeBlockEntity.class);
+            InputRoutingNodeBlockEntity input = helper.getBlockEntity(ctx.input(), InputRoutingNodeBlockEntity.class);
+            BlockPos absInput = helper.absolutePos(ctx.input());
+            BlockPos absMaster = helper.absolutePos(ctx.master());
+
+            master.unlinkNetwork();
+            connectToMaster(helper, input, master, absInput, absMaster);
+            input.onLoad();
+            input.tick(helper.getLevel(), absInput, helper.getLevel().getBlockState(absInput));
+
+            helper.assertTrue(input.getMasterPos().equals(absMaster), "A relinked node should stay bound to its master");
+            helper.succeed();
         });
 
         r.add("routing/empty_source_no_crash", 60, helper -> {

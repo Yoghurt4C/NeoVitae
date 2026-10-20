@@ -38,6 +38,7 @@ public abstract class RoutingNodeBlockEntity extends BlockEntity implements IRou
     private List<BlockPos> connectionList = new ArrayList<>();
 
     private boolean bindingNeedsValidation = true;
+    private boolean autoBindSuppressed = false;
     private int connectionSweepTimer = 0;
 
     private static final int CONNECTION_SWEEP_INTERVAL = 100;
@@ -110,7 +111,7 @@ public abstract class RoutingNodeBlockEntity extends BlockEntity implements IRou
             }
         }
 
-        if (masterPos.equals(BlockPos.ZERO)) {
+        if (masterPos.equals(BlockPos.ZERO) && !autoBindSuppressed) {
             RoutingLinkHelper.tryAutoBind(level, worldPosition, this);
         }
 
@@ -126,6 +127,7 @@ public abstract class RoutingNodeBlockEntity extends BlockEntity implements IRou
         tag.store(Constants.NBT.ROUTING_MASTER, BlockPos.CODEC, masterPos);
 
         tag.store(Constants.NBT.ROUTING_CONNECTION, BlockPos.CODEC.listOf(), List.copyOf(connectionList));
+        tag.putBoolean("noAutoBind", autoBindSuppressed);
     }
 
     @Override
@@ -134,6 +136,7 @@ public abstract class RoutingNodeBlockEntity extends BlockEntity implements IRou
         connectionList.clear();
 
         masterPos = tag.read(Constants.NBT.ROUTING_MASTER, BlockPos.CODEC).orElse(BlockPos.ZERO);
+        autoBindSuppressed = tag.getBooleanOr("noAutoBind", false);
 
         tag.read(Constants.NBT.ROUTING_CONNECTION, BlockPos.CODEC.listOf())
                 .ifPresent(connectionList::addAll);
@@ -203,6 +206,18 @@ public abstract class RoutingNodeBlockEntity extends BlockEntity implements IRou
 
         connectionList.clear();
         setChanged();
+        syncToClient();
+    }
+
+    public void suppressAutoBind() {
+        autoBindSuppressed = true;
+        setChanged();
+    }
+
+    public void detachFromNetwork() {
+        masterPos = BlockPos.ZERO;
+        connectionList.clear();
+        suppressAutoBind();
         syncToClient();
     }
 
@@ -332,6 +347,7 @@ public abstract class RoutingNodeBlockEntity extends BlockEntity implements IRou
 
     @Override
     public void addConnection(BlockPos pos) {
+        autoBindSuppressed = false;
         if (!connectionList.contains(pos)) {
             connectionList.add(pos);
             setChanged();
