@@ -45,6 +45,10 @@ public final class LexVitaeBeamHandler {
 
     private LexVitaeBeamHandler() {}
 
+    public static boolean isFiring() {
+        return lastFiring;
+    }
+
     private static boolean lastFiring = false;
     private static boolean lastHoldingActive = false;
     private static boolean beamArmed = true;

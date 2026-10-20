@@ -23,6 +23,7 @@ import com.breakinblocks.neovitae.client.render.item.SpiritAccumulatorSpecialRen
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent;
 import com.breakinblocks.neovitae.common.fluid.NVFluids;
+import com.breakinblocks.neovitae.client.model.LexFormProperty;
 import com.breakinblocks.neovitae.client.model.OrbFillProperty;
 import com.breakinblocks.neovitae.client.model.OrbFillDecorator;
 import net.neoforged.neoforge.client.event.RegisterItemDecorationsEvent;
@@ -192,6 +193,7 @@ public class ClientModEventHandler {
     @SubscribeEvent
     public static void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {
         event.register(OrbFillProperty.ID, OrbFillProperty.MAP_CODEC);
+        event.register(LexFormProperty.ID, LexFormProperty.MAP_CODEC);
     }
 
     @SubscribeEvent

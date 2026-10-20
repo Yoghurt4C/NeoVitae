@@ -14,42 +14,930 @@
             {
               "when": "ruina",
               "model": {
-                "type": "minecraft:model",
-                "model": "neovitae:item/variant/lex_vitae_active_ruina"
+                "type": "minecraft:range_dispatch",
+                "property": "neovitae:lex_form",
+                "entries": [
+                  {
+                    "threshold": 0.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/base_ruina"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/base_ruina_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 1.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/pickaxe_ruina"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/pickaxe_ruina_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 2.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/axe_ruina"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/axe_ruina_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 3.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/shovel_ruina"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/shovel_ruina_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 4.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/hoe_ruina"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/hoe_ruina_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 5.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/sword_ruina"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/sword_ruina_in_hand"
+                      }
+                    }
+                  }
+                ],
+                "fallback": {
+                  "type": "minecraft:select",
+                  "property": "minecraft:display_context",
+                  "cases": [
+                    {
+                      "when": [
+                        "gui",
+                        "ground",
+                        "fixed",
+                        "on_shelf"
+                      ],
+                      "model": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/base_ruina"
+                      }
+                    }
+                  ],
+                  "fallback": {
+                    "type": "minecraft:model",
+                    "model": "neovitae:item/lex_vitae/base_ruina_in_hand"
+                  }
+                }
               }
             },
             {
               "when": "nihilum",
               "model": {
-                "type": "minecraft:model",
-                "model": "neovitae:item/variant/lex_vitae_active_nihilum"
+                "type": "minecraft:range_dispatch",
+                "property": "neovitae:lex_form",
+                "entries": [
+                  {
+                    "threshold": 0.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/base_nihilum"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/base_nihilum_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 1.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/pickaxe_nihilum"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/pickaxe_nihilum_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 2.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/axe_nihilum"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/axe_nihilum_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 3.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/shovel_nihilum"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/shovel_nihilum_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 4.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/hoe_nihilum"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/hoe_nihilum_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 5.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/sword_nihilum"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/sword_nihilum_in_hand"
+                      }
+                    }
+                  }
+                ],
+                "fallback": {
+                  "type": "minecraft:select",
+                  "property": "minecraft:display_context",
+                  "cases": [
+                    {
+                      "when": [
+                        "gui",
+                        "ground",
+                        "fixed",
+                        "on_shelf"
+                      ],
+                      "model": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/base_nihilum"
+                      }
+                    }
+                  ],
+                  "fallback": {
+                    "type": "minecraft:model",
+                    "model": "neovitae:item/lex_vitae/base_nihilum_in_hand"
+                  }
+                }
               }
             },
             {
               "when": "invictus",
               "model": {
-                "type": "minecraft:model",
-                "model": "neovitae:item/variant/lex_vitae_active_invictus"
+                "type": "minecraft:range_dispatch",
+                "property": "neovitae:lex_form",
+                "entries": [
+                  {
+                    "threshold": 0.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/base_invictus"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/base_invictus_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 1.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/pickaxe_invictus"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/pickaxe_invictus_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 2.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/axe_invictus"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/axe_invictus_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 3.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/shovel_invictus"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/shovel_invictus_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 4.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/hoe_invictus"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/hoe_invictus_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 5.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/sword_invictus"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/sword_invictus_in_hand"
+                      }
+                    }
+                  }
+                ],
+                "fallback": {
+                  "type": "minecraft:select",
+                  "property": "minecraft:display_context",
+                  "cases": [
+                    {
+                      "when": [
+                        "gui",
+                        "ground",
+                        "fixed",
+                        "on_shelf"
+                      ],
+                      "model": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/base_invictus"
+                      }
+                    }
+                  ],
+                  "fallback": {
+                    "type": "minecraft:model",
+                    "model": "neovitae:item/lex_vitae/base_invictus_in_hand"
+                  }
+                }
               }
             },
             {
               "when": "vindicta",
               "model": {
-                "type": "minecraft:model",
-                "model": "neovitae:item/variant/lex_vitae_active_vindicta"
+                "type": "minecraft:range_dispatch",
+                "property": "neovitae:lex_form",
+                "entries": [
+                  {
+                    "threshold": 0.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/base_vindicta"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/base_vindicta_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 1.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/pickaxe_vindicta"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/pickaxe_vindicta_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 2.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/axe_vindicta"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/axe_vindicta_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 3.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/shovel_vindicta"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/shovel_vindicta_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 4.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/hoe_vindicta"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/hoe_vindicta_in_hand"
+                      }
+                    }
+                  },
+                  {
+                    "threshold": 5.0,
+                    "model": {
+                      "type": "minecraft:select",
+                      "property": "minecraft:display_context",
+                      "cases": [
+                        {
+                          "when": [
+                            "gui",
+                            "ground",
+                            "fixed",
+                            "on_shelf"
+                          ],
+                          "model": {
+                            "type": "minecraft:model",
+                            "model": "neovitae:item/lex_vitae/sword_vindicta"
+                          }
+                        }
+                      ],
+                      "fallback": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/sword_vindicta_in_hand"
+                      }
+                    }
+                  }
+                ],
+                "fallback": {
+                  "type": "minecraft:select",
+                  "property": "minecraft:display_context",
+                  "cases": [
+                    {
+                      "when": [
+                        "gui",
+                        "ground",
+                        "fixed",
+                        "on_shelf"
+                      ],
+                      "model": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/base_vindicta"
+                      }
+                    }
+                  ],
+                  "fallback": {
+                    "type": "minecraft:model",
+                    "model": "neovitae:item/lex_vitae/base_vindicta_in_hand"
+                  }
+                }
               }
             }
           ],
           "fallback": {
-            "type": "minecraft:model",
-            "model": "neovitae:item/variant/lex_vitae_active"
+            "type": "minecraft:range_dispatch",
+            "property": "neovitae:lex_form",
+            "entries": [
+              {
+                "threshold": 0.0,
+                "model": {
+                  "type": "minecraft:select",
+                  "property": "minecraft:display_context",
+                  "cases": [
+                    {
+                      "when": [
+                        "gui",
+                        "ground",
+                        "fixed",
+                        "on_shelf"
+                      ],
+                      "model": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/base_raw"
+                      }
+                    }
+                  ],
+                  "fallback": {
+                    "type": "minecraft:model",
+                    "model": "neovitae:item/lex_vitae/base_raw_in_hand"
+                  }
+                }
+              },
+              {
+                "threshold": 1.0,
+                "model": {
+                  "type": "minecraft:select",
+                  "property": "minecraft:display_context",
+                  "cases": [
+                    {
+                      "when": [
+                        "gui",
+                        "ground",
+                        "fixed",
+                        "on_shelf"
+                      ],
+                      "model": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/pickaxe_raw"
+                      }
+                    }
+                  ],
+                  "fallback": {
+                    "type": "minecraft:model",
+                    "model": "neovitae:item/lex_vitae/pickaxe_raw_in_hand"
+                  }
+                }
+              },
+              {
+                "threshold": 2.0,
+                "model": {
+                  "type": "minecraft:select",
+                  "property": "minecraft:display_context",
+                  "cases": [
+                    {
+                      "when": [
+                        "gui",
+                        "ground",
+                        "fixed",
+                        "on_shelf"
+                      ],
+                      "model": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/axe_raw"
+                      }
+                    }
+                  ],
+                  "fallback": {
+                    "type": "minecraft:model",
+                    "model": "neovitae:item/lex_vitae/axe_raw_in_hand"
+                  }
+                }
+              },
+              {
+                "threshold": 3.0,
+                "model": {
+                  "type": "minecraft:select",
+                  "property": "minecraft:display_context",
+                  "cases": [
+                    {
+                      "when": [
+                        "gui",
+                        "ground",
+                        "fixed",
+                        "on_shelf"
+                      ],
+                      "model": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/shovel_raw"
+                      }
+                    }
+                  ],
+                  "fallback": {
+                    "type": "minecraft:model",
+                    "model": "neovitae:item/lex_vitae/shovel_raw_in_hand"
+                  }
+                }
+              },
+              {
+                "threshold": 4.0,
+                "model": {
+                  "type": "minecraft:select",
+                  "property": "minecraft:display_context",
+                  "cases": [
+                    {
+                      "when": [
+                        "gui",
+                        "ground",
+                        "fixed",
+                        "on_shelf"
+                      ],
+                      "model": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/hoe_raw"
+                      }
+                    }
+                  ],
+                  "fallback": {
+                    "type": "minecraft:model",
+                    "model": "neovitae:item/lex_vitae/hoe_raw_in_hand"
+                  }
+                }
+              },
+              {
+                "threshold": 5.0,
+                "model": {
+                  "type": "minecraft:select",
+                  "property": "minecraft:display_context",
+                  "cases": [
+                    {
+                      "when": [
+                        "gui",
+                        "ground",
+                        "fixed",
+                        "on_shelf"
+                      ],
+                      "model": {
+                        "type": "minecraft:model",
+                        "model": "neovitae:item/lex_vitae/sword_raw"
+                      }
+                    }
+                  ],
+                  "fallback": {
+                    "type": "minecraft:model",
+                    "model": "neovitae:item/lex_vitae/sword_raw_in_hand"
+                  }
+                }
+              }
+            ],
+            "fallback": {
+              "type": "minecraft:select",
+              "property": "minecraft:display_context",
+              "cases": [
+                {
+                  "when": [
+                    "gui",
+                    "ground",
+                    "fixed",
+                    "on_shelf"
+                  ],
+                  "model": {
+                    "type": "minecraft:model",
+                    "model": "neovitae:item/lex_vitae/base_raw"
+                  }
+                }
+              ],
+              "fallback": {
+                "type": "minecraft:model",
+                "model": "neovitae:item/lex_vitae/base_raw_in_hand"
+              }
+            }
           }
         }
       }
     ],
     "fallback": {
-      "type": "minecraft:model",
-      "model": "neovitae:item/variant/lex_vitae_dormant"
+      "type": "minecraft:select",
+      "property": "minecraft:display_context",
+      "cases": [
+        {
+          "when": [
+            "gui",
+            "ground",
+            "fixed",
+            "on_shelf"
+          ],
+          "model": {
+            "type": "minecraft:model",
+            "model": "neovitae:item/lex_vitae/base_dormant"
+          }
+        }
+      ],
+      "fallback": {
+        "type": "minecraft:model",
+        "model": "neovitae:item/lex_vitae/base_dormant_in_hand"
+      }
     }
   }
 }

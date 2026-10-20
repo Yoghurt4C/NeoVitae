@@ -25,6 +25,7 @@ import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import com.breakinblocks.neovitae.common.datacomponent.NVDataComponents;
 import com.breakinblocks.neovitae.common.item.NVItems;
+import com.breakinblocks.neovitae.common.item.soul.LexVitaeForm;
 import com.breakinblocks.neovitae.common.item.soul.LexVitaeGrowth;
 import com.breakinblocks.neovitae.common.item.soul.LexVitaeItem;
 import com.breakinblocks.neovitae.gametest.base.NVTestRegistrar;
@@ -397,5 +398,21 @@ public final class LexVitaeTests {
                 helper.succeed();
             });
         });
+
+        r.add("lex_vitae/form_follows_the_target_block", 20, helper -> {
+            expectForm(helper, Blocks.STONE.defaultBlockState(), LexVitaeForm.PICKAXE);
+            expectForm(helper, Blocks.OAK_LOG.defaultBlockState(), LexVitaeForm.AXE);
+            expectForm(helper, Blocks.DIRT.defaultBlockState(), LexVitaeForm.SHOVEL);
+            expectForm(helper, Blocks.WHEAT.defaultBlockState(), LexVitaeForm.HOE);
+            expectForm(helper, Blocks.FARMLAND.defaultBlockState(), LexVitaeForm.HOE);
+            expectForm(helper, Blocks.OAK_LEAVES.defaultBlockState(), LexVitaeForm.HOE);
+            expectForm(helper, Blocks.GLASS.defaultBlockState(), LexVitaeForm.BASE);
+            helper.succeed();
+        });
+    }
+
+    private static void expectForm(GameTestHelper helper, BlockState state, LexVitaeForm expected) {
+        LexVitaeForm actual = LexVitaeForm.forBlock(state);
+        helper.assertTrue(actual == expected, state.getBlock() + " should give " + expected + ", gave " + actual);
     }
 }
