@@ -1,9 +1,17 @@
 package com.breakinblocks.neovitae.client.event;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -12,7 +20,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import org.joml.Matrix4f;
+import com.breakinblocks.neovitae.client.render.RitualBoxRenderer;
 import com.breakinblocks.neovitae.common.network.LexBeamPayload;
 import com.breakinblocks.neovitae.common.network.LexCycleRadiusPayload;
 import com.breakinblocks.neovitae.common.network.LexModeCyclePayload;
@@ -30,21 +41,60 @@ public final class LexVitaeBeamHandler {
     private static final double WOBBLE_AMPLITUDE = 0.12;
     private static final double WOBBLE_FREQUENCY = 1.4;
 
-    public static int beamColor(SpiritusType type) {
-        return switch (type) {
-            case RAW -> 0x66E6E6;
-            case RUINA -> 0x55EE55;
-            case NIHILUM -> 0xFF8844;
-            case VINDICTA -> 0xBB55EE;
-            case INVICTUS -> 0xEEEEEE;
-        };
-    }
+    private static final float OUTLINE_ALPHA = 0.8F;
 
     private LexVitaeBeamHandler() {}
 
     private static boolean lastFiring = false;
     private static boolean lastHoldingActive = false;
     private static boolean beamArmed = true;
+
+    @SubscribeEvent
+    public static void onRenderLevel(RenderLevelStageEvent.AfterTranslucentParticles event) {
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        if (player == null || mc.level == null) return;
+
+        ItemStack held = player.getMainHandItem();
+        if (!(held.getItem() instanceof LexVitaeItem) || !LexVitaeItem.isActive(held) || !LexVitaeItem.canMine(held)) return;
+        int radius = held.getOrDefault(NVDataComponents.LEX_RADIUS.get(), 0);
+
+        BlockHitResult hit;
+        if (lastFiring) {
+            Vec3 origin = player.getEyePosition();
+            hit = mc.level.clip(new ClipContext(origin, origin.add(player.getLookAngle().scale(LexVitaeItem.BEAM_RANGE)),
+                    ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+        } else if (radius > 0 && mc.hitResult instanceof BlockHitResult blockHit) {
+            hit = blockHit;
+        } else {
+            return;
+        }
+        if (hit.getType() != HitResult.Type.BLOCK) return;
+
+        BlockPos center = hit.getBlockPos();
+        BlockState centerState = mc.level.getBlockState(center);
+        if (centerState.isAir() || centerState.getDestroySpeed(mc.level, center) < 0) return;
+
+        int color = LexVitaeItem.beamColor(held.getOrDefault(NVDataComponents.SPIRITUS_TYPE.get(), SpiritusType.RAW));
+
+        Vec3 cameraPos = event.getLevelRenderState().cameraRenderState.pos;
+        PoseStack poseStack = event.getPoseStack();
+        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
+        RenderType lineType = RenderTypes.lines();
+        VertexConsumer lines = bufferSource.getBuffer(lineType);
+
+        poseStack.pushPose();
+        poseStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+        Matrix4f matrix = poseStack.last().pose();
+        RitualBoxRenderer.drawLineBox(matrix, lines, new AABB(center).inflate(0.004), color, OUTLINE_ALPHA);
+        for (BlockPos pos : LexVitaeItem.aoePositions(center, hit.getDirection().getAxis(), radius)) {
+            if (LexVitaeItem.canAoeBreak(mc.level, pos, held)) {
+                RitualBoxRenderer.drawLineBox(matrix, lines, new AABB(pos).inflate(0.004), color, OUTLINE_ALPHA);
+            }
+        }
+        poseStack.popPose();
+        bufferSource.endBatch(lineType);
+    }
 
     @SubscribeEvent
     public static void onMouseScroll(InputEvent.MouseScrollingEvent event) {
@@ -120,7 +170,7 @@ public final class LexVitaeBeamHandler {
 
         float t = player.tickCount + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
         SpiritusType type = held.getOrDefault(NVDataComponents.SPIRITUS_TYPE.get(), SpiritusType.RAW);
-        int color = beamColor(type);
+        int color = LexVitaeItem.beamColor(type);
         var glow = new ColoredParticleOptions(NVParticles.BLOOD_GLOW.get(), color, true);
 
         for (double d = 0.4; d <= dist; d += STEP) {
