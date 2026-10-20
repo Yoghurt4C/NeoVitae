@@ -19,6 +19,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import com.breakinblocks.neovitae.common.entity.NVEntities;
 import com.breakinblocks.neovitae.common.recipe.meteor.MeteorRecipe;
 import com.breakinblocks.neovitae.common.recipe.meteor.MeteorRecipeHelper;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 
 /**
@@ -28,6 +30,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 public class EntityMeteor extends ThrowableProjectile {
 
     private static final int NO_TARGET_Y = Integer.MIN_VALUE;
+    private static final double TUNNEL_DRAG = 0.99;
+    private static final EntityDataAccessor<Boolean> TUNNELING = SynchedEntityData.defineId(EntityMeteor.class, EntityDataSerializers.BOOLEAN);
 
     private ItemStack containedStack = ItemStack.EMPTY;
     private int targetY = NO_TARGET_Y;
@@ -56,6 +60,7 @@ public class EntityMeteor extends ThrowableProjectile {
 
     public void setTargetY(int targetY) {
         this.targetY = targetY;
+        this.entityData.set(TUNNELING, targetY != NO_TARGET_Y);
     }
 
     public void setOresOnly(boolean oresOnly) {
@@ -81,12 +86,17 @@ public class EntityMeteor extends ThrowableProjectile {
         super.readAdditionalSaveData(compound);
         containedStack = compound.read("item", ItemStack.CODEC).orElse(ItemStack.EMPTY);
         targetY = compound.getIntOr("targetY", NO_TARGET_Y);
+        this.entityData.set(TUNNELING, targetY != NO_TARGET_Y);
         oresOnly = compound.getBooleanOr("oresOnly", false);
     }
 
     @Override
     public void tick() {
-        super.tick();
+        if (this.entityData.get(TUNNELING)) {
+            tunnel();
+        } else {
+            super.tick();
+        }
         if (level().isClientSide() || targetY == NO_TARGET_Y) return;
         if (position().y <= targetY) {
             detonateAt(Mth.floor(position().x), targetY, Mth.floor(position().z));
@@ -108,6 +118,14 @@ public class EntityMeteor extends ThrowableProjectile {
         super.onHitBlock(hitResult);
     }
 
+    private void tunnel() {
+        applyGravity();
+        setDeltaMovement(getDeltaMovement().scale(TUNNEL_DRAG));
+        setPos(position().add(getDeltaMovement()));
+        updateRotation();
+        baseTick();
+    }
+
     private void detonateAt(int x, int y, int z) {
         MeteorRecipe recipe = MeteorRecipeHelper.findRecipe(level(), containedStack);
         if (recipe != null) {
@@ -118,6 +136,7 @@ public class EntityMeteor extends ThrowableProjectile {
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(TUNNELING, false);
     }
 
     @Override
