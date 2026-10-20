@@ -1,0 +1,11 @@
+{
+  "type": "modonomicon:text",
+  "condition": {
+    "type": "modonomicon:none"
+  },
+  "id": "felling",
+  "show_title_separator": true,
+  "sort_number": 3,
+  "text": "book.neovitae.guide.spiritus.lex_vitae.felling.text",
+  "title": "book.neovitae.guide.spiritus.lex_vitae.felling.title"
+}
