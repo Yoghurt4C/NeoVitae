@@ -1,0 +1,11 @@
+{
+  "type": "modonomicon:text",
+  "condition": {
+    "type": "modonomicon:none"
+  },
+  "id": "upkeep",
+  "show_title_separator": true,
+  "sort_number": 3,
+  "text": "book.neovitae.guide.utility.demon_lantern.upkeep.text",
+  "title": "book.neovitae.guide.utility.demon_lantern.upkeep.title"
+}
