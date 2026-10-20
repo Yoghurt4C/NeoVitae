@@ -4,6 +4,7 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IIngredientAliasRegistration;
@@ -23,6 +24,7 @@ import com.breakinblocks.neovitae.common.sentient.SentientUpgrade;
 import com.breakinblocks.neovitae.ritual.RitualLayouts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.world.level.Level;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -45,6 +47,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import com.breakinblocks.neovitae.NeoVitae;
+import com.breakinblocks.neovitae.client.screen.AthanorScreen;
 import com.breakinblocks.neovitae.client.screen.RoutingNodeScreen;
 import com.breakinblocks.neovitae.client.screen.SanguineCrafterScreen;
 import com.breakinblocks.neovitae.common.block.NVBlocks;
@@ -147,6 +150,12 @@ public class NeoVitaeJEIPlugin implements IModPlugin {
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGhostIngredientHandler(RoutingNodeScreen.class, new RoutingNodeGhostHandler());
         registration.addGhostIngredientHandler(SanguineCrafterScreen.class, new SanguineCrafterGhostHandler());
+        registration.addGuiContainerHandler(AthanorScreen.class, new IGuiContainerHandler<>() {
+            @Override
+            public List<Rect2i> getGuiExtraAreas(AthanorScreen screen) {
+                return List.of(screen.sidePanelArea());
+            }
+        });
     }
 
     @Override

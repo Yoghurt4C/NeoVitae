@@ -15,6 +15,7 @@ public class NVGameTestRegistration {
         VitaeLinkTests.register(r);
         OrbVitaeLinkTests.register(r);
         AthanorTests.register(r);
+        AthanorSideTests.register(r);
         BloodOrbTests.register(r);
         CapabilityTests.register(r);
         DataValidationTests.register(r);

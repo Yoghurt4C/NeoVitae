@@ -60,10 +60,12 @@ import com.breakinblocks.neovitae.common.recipe.athanor.AthanorRecipe;
 import com.breakinblocks.neovitae.common.recipe.athanor.AthanorRecipeInput;
 import com.breakinblocks.neovitae.common.tag.NVTags;
 import com.breakinblocks.neovitae.util.AthanorOutputHandler;
+import com.breakinblocks.neovitae.util.SplitResourceHandler;
 import com.breakinblocks.neovitae.spiritus.WorldSpiritusHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -136,6 +138,34 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider,
     }
 
     public final Inv athanorInv = new Inv();
+
+    private final AthanorSides.Mode[] sideModes = new AthanorSides.Mode[AthanorSides.Face.values().length];
+
+    {
+        Arrays.fill(sideModes, AthanorSides.Mode.DEFAULT);
+    }
+
+    public AthanorSides.Mode getSideMode(AthanorSides.Face face) {
+        return sideModes[face.ordinal()];
+    }
+
+    public AthanorSides.Mode getSideMode(Direction side) {
+        return getSideMode(AthanorSides.Face.of(getBlockState().getValue(AthanorBlock.FACING), side));
+    }
+
+    public void cycleSideMode(AthanorSides.Face face, int step) {
+        sideModes[face.ordinal()] = sideModes[face.ordinal()].cycle(step);
+        setChanged();
+        if (level != null) {
+            level.invalidateCapabilities(worldPosition);
+        }
+    }
+
+    public void setSideModeFromNetwork(int face, int mode) {
+        if (face >= 0 && face < sideModes.length) {
+            sideModes[face] = AthanorSides.Mode.byOrdinal(mode);
+        }
+    }
 
     public class Inv extends ItemStacksResourceHandler {
         Inv() { super(INVENTORY_SIZE); }
@@ -228,19 +258,44 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider,
         return spiritusBlocked;
     }
 
+    @Nullable
     public static ResourceHandler<ItemResource> getItemHandler(AthanorBlockEntity tile, @Nullable Direction side) {
         if (side == null) {
             return tile.athanorInv;
         }
-        return switch (side) {
-            case UP -> RangedResourceHandler.of(tile.athanorInv, TOOL_SLOT, TOOL_SLOT + 1);
-            case DOWN -> RangedResourceHandler.of(tile.athanorInv, OUTPUT_SLOT, OUTPUT_SLOT + NUM_OUTPUTS);
-            default -> RangedResourceHandler.of(tile.athanorInv, INPUT_START, OUTPUT_BUCKET_SLOT + 1);
+        AthanorSides.Mode mode = tile.getSideMode(side);
+        if (mode == AthanorSides.Mode.DEFAULT) {
+            mode = AthanorSides.Face.of(tile.getBlockState().getValue(AthanorBlock.FACING), side).defaultRole();
+        }
+        return switch (mode) {
+            case TOOL -> RangedResourceHandler.of(tile.athanorInv, TOOL_SLOT, TOOL_SLOT + 1);
+            case OUTPUTS -> outputSlots(tile);
+            case INPUTS, DEFAULT -> inputSlots(tile);
+            case BOTH -> new SplitResourceHandler<>(inputSlots(tile), outputSlots(tile));
+            case OFF -> null;
         };
     }
 
+    private static ResourceHandler<ItemResource> inputSlots(AthanorBlockEntity tile) {
+        return RangedResourceHandler.of(tile.athanorInv, INPUT_START, OUTPUT_BUCKET_SLOT + 1);
+    }
+
+    private static ResourceHandler<ItemResource> outputSlots(AthanorBlockEntity tile) {
+        return RangedResourceHandler.of(tile.athanorInv, OUTPUT_SLOT, OUTPUT_SLOT + NUM_OUTPUTS);
+    }
+
+    @Nullable
     public static ResourceHandler<FluidResource> getFluidHandler(AthanorBlockEntity tile, @Nullable Direction side) {
-        return side == Direction.DOWN ? tile.outputTank : tile.inputTank;
+        if (side == null) {
+            return tile.inputTank;
+        }
+        return switch (tile.getSideMode(side)) {
+            case DEFAULT -> side == Direction.DOWN ? tile.outputTank : tile.inputTank;
+            case INPUTS -> tile.inputTank;
+            case OUTPUTS -> tile.outputTank;
+            case BOTH -> new SplitResourceHandler<>(tile.inputTank, tile.outputTank);
+            case TOOL, OFF -> null;
+        };
     }
 
     @Override
@@ -256,6 +311,9 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider,
         tag.child("outputTank").ifPresent(outputTank::deserialize);
         progress = tag.getDoubleOr("arcprogress", 0d);
         spiritusBlocked = tag.getBooleanOr("spiritusBlocked", false);
+        for (AthanorSides.Face face : AthanorSides.Face.values()) {
+            sideModes[face.ordinal()] = AthanorSides.Mode.byName(tag.getStringOr("side_" + face.getName(), ""));
+        }
         tag.child("chunkSpiritus").ifPresent(spiritusTag -> {
             for (SpiritusType type : SpiritusType.values()) {
                 chunkSpiritus[type.ordinal()] = spiritusTag.getDoubleOr(type.getSerializedName(), 0d);
@@ -283,6 +341,11 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider,
         outputTank.serialize(tag.child("outputTank"));
         tag.putDouble("arcprogress", progress);
         tag.putBoolean("spiritusBlocked", spiritusBlocked);
+        for (AthanorSides.Face face : AthanorSides.Face.values()) {
+            if (sideModes[face.ordinal()] != AthanorSides.Mode.DEFAULT) {
+                tag.putString("side_" + face.getName(), sideModes[face.ordinal()].getName());
+            }
+        }
         ValueOutput spiritusTag = tag.child("chunkSpiritus");
         for (SpiritusType type : SpiritusType.values()) {
             spiritusTag.putDouble(type.getSerializedName(), chunkSpiritus[type.ordinal()]);

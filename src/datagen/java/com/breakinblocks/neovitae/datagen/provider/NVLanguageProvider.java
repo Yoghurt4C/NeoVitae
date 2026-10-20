@@ -1742,6 +1742,21 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         add("gui.neovitae.athanor.spiritus_progress", "%s / %s stored");
         add("gui.neovitae.athanor.spiritus_required", "Recipe requires %s");
         add("gui.neovitae.athanor.insufficient", "Not enough spiritus");
+        add("gui.neovitae.athanor.sides", "Sides");
+        add("gui.neovitae.athanor.face.front", "Front");
+        add("gui.neovitae.athanor.face.back", "Back");
+        add("gui.neovitae.athanor.face.left", "Left");
+        add("gui.neovitae.athanor.face.right", "Right");
+        add("gui.neovitae.athanor.face.top", "Top");
+        add("gui.neovitae.athanor.face.bottom", "Bottom");
+        add("gui.neovitae.athanor.face_mode", "%s: %s");
+        add("gui.neovitae.athanor.side_mode.default", "Default (%s)");
+        add("gui.neovitae.athanor.side_mode.inputs", "Inputs");
+        add("gui.neovitae.athanor.side_mode.outputs", "Outputs");
+        add("gui.neovitae.athanor.side_mode.both", "Inputs & Outputs");
+        add("gui.neovitae.athanor.side_mode.tool", "Tool");
+        add("gui.neovitae.athanor.side_mode.off", "Off");
+        add("gui.neovitae.athanor.side_hint", "Click to change, right-click to go back");
         add("gui.neovitae.show_recipes", "Click to view recipes (JEI)");
 
         // GUI - Dungeon Seal
