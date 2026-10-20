@@ -57,6 +57,7 @@ public class NVGameTestRegistration {
         SentientRitualTests.register(r);
         SanguineCrafterTests.register(r);
         SentientRepairTests.register(r);
+        SentientClientSyncTests.register(r);
         GameplayRegressionTests.register(r);
         BloodLanternTests.register(r);
         BurdenGroundingTests.register(r);

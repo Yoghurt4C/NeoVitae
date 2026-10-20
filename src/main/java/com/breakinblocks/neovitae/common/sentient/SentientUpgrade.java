@@ -1,8 +1,10 @@
 package com.breakinblocks.neovitae.common.sentient;
 
+import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Util;
 import net.minecraft.core.Holder;
@@ -11,6 +13,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Unit;
@@ -25,6 +28,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.apache.logging.log4j.util.TriConsumer;
 import com.breakinblocks.neovitae.common.sentient.effects.AttributeEffect;
 import com.breakinblocks.neovitae.common.sentient.effects.ConditionalEffect;
@@ -40,10 +44,33 @@ public record SentientUpgrade(Levels levels, DataComponentMap effects) {
             SentientEffectComponents.CODEC.fieldOf("effects").forGetter(SentientUpgrade::effects)
     ).apply(builder, SentientUpgrade::new));
 
+    private static final Codec<DataComponentMap> CLIENT_EFFECTS_CODEC = Codec.unboundedMap(Identifier.CODEC, Codec.PASSTHROUGH)
+            .xmap(SentientUpgrade::readClientFlags, SentientUpgrade::writeClientFlags);
+
     public static final Codec<SentientUpgrade> CLIENT_CODEC = RecordCodecBuilder.create(builder -> builder.group(
             Levels.CODEC.fieldOf("levels").forGetter(SentientUpgrade::levels),
-            MapCodec.unitCodec(DataComponentMap.EMPTY).fieldOf("effects").forGetter(SentientUpgrade::effects)
+            CLIENT_EFFECTS_CODEC.fieldOf("effects").forGetter(SentientUpgrade::effects)
     ).apply(builder, SentientUpgrade::new));
+
+    private static DataComponentMap readClientFlags(Map<Identifier, Dynamic<?>> effects) {
+        DataComponentMap.Builder flags = DataComponentMap.builder();
+        for (DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> flag : SentientEffectComponents.CLIENT_FLAGS) {
+            if (effects.containsKey(flag.getId())) {
+                flags.set(flag.get(), Unit.INSTANCE);
+            }
+        }
+        return flags.build();
+    }
+
+    private static Map<Identifier, Dynamic<?>> writeClientFlags(DataComponentMap effects) {
+        Map<Identifier, Dynamic<?>> flags = new LinkedHashMap<>();
+        for (DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> flag : SentientEffectComponents.CLIENT_FLAGS) {
+            if (effects.has(flag.get())) {
+                flags.put(flag.getId(), new Dynamic<>(JsonOps.INSTANCE, new JsonObject()));
+            }
+        }
+        return flags;
+    }
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<SentientUpgrade>> HOLDER_STREAM_CODEC = ByteBufCodecs.holderRegistry(NVRegistries.Keys.SENTIENT_UPGRADES);
 
