@@ -153,7 +153,8 @@ public class NeoVitaeJEIPlugin implements IModPlugin {
         registration.addGuiContainerHandler(AthanorScreen.class, new IGuiContainerHandler<>() {
             @Override
             public List<Rect2i> getGuiExtraAreas(AthanorScreen screen) {
-                return List.of(screen.sidePanelArea());
+                Rect2i area = screen.sidePanelArea();
+                return area == null ? List.of() : List.of(area);
             }
         });
     }

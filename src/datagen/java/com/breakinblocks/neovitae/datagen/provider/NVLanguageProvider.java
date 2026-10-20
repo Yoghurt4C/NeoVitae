@@ -189,6 +189,11 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         add("gui.neovitae.athanor.idle.not_enough_spiritus", "Not enough Spiritus in this chunk");
         add("gui.neovitae.athanor.idle.tool_unbound", "The tool is not bound to anyone");
         add("gui.neovitae.athanor.idle.not_enough_ev", "Not enough Essentia Vitae in the tool owner's network");
+        add("gui.neovitae.athanor.group.tool", "Tool slot");
+        add("gui.neovitae.athanor.group.input", "Input slots");
+        add("gui.neovitae.athanor.group.input_bucket", "Fluid input slot");
+        add("gui.neovitae.athanor.group.output_bucket", "Fluid output slot");
+        add("gui.neovitae.athanor.group.output", "Output slots");
         add("gui.neovitae.tabula_vitae.idle.cutting_fluid_unbound", "That cutting fluid is not bound to anyone");
         add("gui.neovitae.side.down", "Bottom");
         add("gui.neovitae.side.up", "Top");
@@ -1742,21 +1747,6 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         add("gui.neovitae.athanor.spiritus_progress", "%s / %s stored");
         add("gui.neovitae.athanor.spiritus_required", "Recipe requires %s");
         add("gui.neovitae.athanor.insufficient", "Not enough spiritus");
-        add("gui.neovitae.athanor.sides", "Sides");
-        add("gui.neovitae.athanor.face.front", "Front");
-        add("gui.neovitae.athanor.face.back", "Back");
-        add("gui.neovitae.athanor.face.left", "Left");
-        add("gui.neovitae.athanor.face.right", "Right");
-        add("gui.neovitae.athanor.face.top", "Top");
-        add("gui.neovitae.athanor.face.bottom", "Bottom");
-        add("gui.neovitae.athanor.face_mode", "%s: %s");
-        add("gui.neovitae.athanor.side_mode.default", "Default (%s)");
-        add("gui.neovitae.athanor.side_mode.inputs", "Inputs");
-        add("gui.neovitae.athanor.side_mode.outputs", "Outputs");
-        add("gui.neovitae.athanor.side_mode.both", "Inputs & Outputs");
-        add("gui.neovitae.athanor.side_mode.tool", "Tool");
-        add("gui.neovitae.athanor.side_mode.off", "Off");
-        add("gui.neovitae.athanor.side_hint", "Click to change, right-click to go back");
         add("gui.neovitae.show_recipes", "Click to view recipes (JEI)");
 
         // GUI - Dungeon Seal
