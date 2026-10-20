@@ -90,7 +90,8 @@ public class ItemNodeRouter extends Item {
         ItemStack stack = context.getItemInHand();
 
         if (level.isClientSide()) {
-            return player.isShiftKeyDown() ? InteractionResult.SUCCESS : InteractionResult.PASS;
+            return player.isShiftKeyDown() || level.getBlockEntity(pos) instanceof IRoutingNode
+                    ? InteractionResult.SUCCESS : InteractionResult.PASS;
         }
 
         BlockEntity tileHit = level.getBlockEntity(pos);

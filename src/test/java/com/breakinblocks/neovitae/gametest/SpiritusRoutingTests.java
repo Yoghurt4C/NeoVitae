@@ -70,6 +70,27 @@ public final class SpiritusRoutingTests {
         });
 
 
+        r.addIsolated("spiritus_routing/all_aspects_exports_any_type", 300, helper -> {
+            helper.runAfterDelay(1, () -> {
+                Network net = buildNetwork(helper, SpiritusType.NIHILUM);
+                if (net == null) return;
+
+                net.accumulator().attuneTo(SpiritusType.NIHILUM);
+                net.accumulator().insertSpiritus(SpiritusType.NIHILUM, 500);
+                net.output().setSpiritusExportAll(25);
+
+                helper.succeedWhen(() -> {
+                    double stored = net.accumulator().getStored();
+                    helper.assertTrue(Math.abs(stored - 475) <= 0.0001,
+                            "An all-aspects export should take nihilum, stored=" + stored);
+                    double chunkAmount = WorldSpiritusHandler.getCurrentSpiritus(helper.getLevel(), helper.absolutePos(OUTPUT_POS), SpiritusType.NIHILUM);
+                    helper.assertTrue(chunkAmount >= 25 - 0.0001,
+                            "Output chunk should be stocked to at least 25 nihilum, has " + chunkAmount);
+                });
+            });
+        });
+
+
         r.addIsolated("spiritus_routing/wrong_type_is_not_exported", 200, helper -> {
             helper.runAfterDelay(1, () -> {
                 Network net = buildNetwork(helper, SpiritusType.NIHILUM, SpiritusType.RAW);
@@ -143,7 +164,7 @@ public final class SpiritusRoutingTests {
                     SpiritAccumulatorBlockEntity accumulator =
                             helper.getBlockEntity(ACCUMULATOR_POS, SpiritAccumulatorBlockEntity.class);
                     helper.assertTrue(accumulator != null, "No accumulator");
-                    helper.assertTrue(!(!accumulator.getMasterPos().equals(helper.absolutePos(MASTER_POS))), "Accumulator should autolink to the master, masterPos=" + accumulator.getMasterPos());
+                    helper.assertTrue(!(!accumulator.getMasterPos().equals(helper.absolutePos(MASTER_POS))), "Accumulator should autolink to the master, masterPos=" + accumulator.getMasterPos());
                 });
             });
         });

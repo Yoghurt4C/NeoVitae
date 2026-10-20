@@ -219,6 +219,7 @@ public class MasterRoutingNodeBlockEntity extends BlockEntity implements IMaster
         }
 
         setChanged();
+        pendingClientSync = true;
         return added;
     }
 
@@ -645,6 +646,7 @@ public class MasterRoutingNodeBlockEntity extends BlockEntity implements IMaster
         inputNodeLists.clear();
         outputNodeLists.clear();
         connectionMap.clear();
+        pendingClientSync = true;
         setChanged();
     }
 

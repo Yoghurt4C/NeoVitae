@@ -39,6 +39,7 @@ public class OmniRoutingNodeBlockEntity extends FilteredRoutingNodeBlockEntity
     @Nullable
     private SpiritusType spiritusExportType;
     private int spiritusStockTarget;
+    private boolean spiritusExportAll;
 
     public OmniRoutingNodeBlockEntity(BlockPos pos, BlockState state) {
         super(NVTiles.OMNI_ROUTING_NODE_TYPE.get(), pos, state);
@@ -138,21 +139,23 @@ public class OmniRoutingNodeBlockEntity extends FilteredRoutingNodeBlockEntity
     }
 
     @Override
-    public void cycleSpiritusType(int direction) {
-        SpiritusType[] types = SpiritusType.values();
-        int current = spiritusExportType == null ? 0 : spiritusExportType.ordinal() + 1;
-        int next = Math.floorMod(current + (direction < 0 ? -1 : 1), types.length + 1);
-        setSpiritusExport(next == 0 ? null : types[next - 1], spiritusStockTarget);
-    }
-
-    @Override
-    public void adjustSpiritusStock(int delta) {
-        setSpiritusExport(spiritusExportType, Math.min(1000, Math.max(0, spiritusStockTarget + delta)));
+    public boolean isSpiritusExportAll() {
+        return spiritusExportAll;
     }
 
     @Override
     public void setSpiritusExport(@Nullable SpiritusType type, int stockTarget) {
+        applySpiritusExport(type, false, stockTarget);
+    }
+
+    @Override
+    public void setSpiritusExportAll(int stockTarget) {
+        applySpiritusExport(null, true, stockTarget);
+    }
+
+    private void applySpiritusExport(@Nullable SpiritusType type, boolean all, int stockTarget) {
         this.spiritusExportType = type;
+        this.spiritusExportAll = all;
         this.spiritusStockTarget = Math.max(0, stockTarget);
         setChanged();
         if (level != null && !level.isClientSide()) {
@@ -163,7 +166,7 @@ public class OmniRoutingNodeBlockEntity extends FilteredRoutingNodeBlockEntity
     @Override
     protected void saveAdditional(ValueOutput tag) {
         super.saveAdditional(tag);
-        tag.putString("spiritusExportType", spiritusExportType == null ? "" : spiritusExportType.getSerializedName());
+        tag.putString("spiritusExportType", spiritusExportAll ? "all" : spiritusExportType == null ? "" : spiritusExportType.getSerializedName());
         tag.putInt("spiritusStockTarget", spiritusStockTarget);
     }
 
@@ -172,6 +175,7 @@ public class OmniRoutingNodeBlockEntity extends FilteredRoutingNodeBlockEntity
         super.loadAdditional(tag);
         String typeStr = tag.getStringOr("spiritusExportType", "");
         spiritusExportType = null;
+        spiritusExportAll = "all".equals(typeStr);
         if (!typeStr.isEmpty()) {
             for (SpiritusType type : SpiritusType.values()) {
                 if (type.getSerializedName().equals(typeStr)) {

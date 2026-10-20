@@ -22,6 +22,10 @@ public class HellfireForgeRenderer implements BlockEntityRenderer<HellfireForgeB
 
     private static final float CORNER_OFFSET = 1 + 3 / 16F;
     private static final int SLOT_COUNT = 6;
+    private static final float GEM_HEIGHT = 1.1F;
+    private static final float GEM_SCALE = 0.6F;
+    private static final float GEM_BOB = 0.04F;
+    private static final float GEM_SWAY_DEGREES = 20.0F;
 
     private final ItemModelResolver itemModelResolver;
 
@@ -33,6 +37,8 @@ public class HellfireForgeRenderer implements BlockEntityRenderer<HellfireForgeB
         public final ItemStackRenderState[] items = new ItemStackRenderState[SLOT_COUNT];
         public final boolean[] present = new boolean[SLOT_COUNT];
         public float itemRotation;
+        public float gemYaw;
+        public float gemBob;
 
         public State() {
             for (int i = 0; i < SLOT_COUNT; i++) items[i] = new ItemStackRenderState();
@@ -59,6 +65,11 @@ public class HellfireForgeRenderer implements BlockEntityRenderer<HellfireForgeB
             }
         }
         s.itemRotation = 720.0F * (System.currentTimeMillis() & 0x3FFFL) / 0x3FFFL;
+        float seconds = (System.currentTimeMillis() % 3_600_000L) / 1000.0F;
+        double dx = cameraPos.x - (forge.getBlockPos().getX() + 0.5);
+        double dz = cameraPos.z - (forge.getBlockPos().getZ() + 0.5);
+        s.gemYaw = (float) Math.toDegrees(Math.atan2(dx, dz)) + GEM_SWAY_DEGREES * (float) Math.sin(seconds * 1.5F);
+        s.gemBob = GEM_BOB * (float) Math.sin(seconds * 2.0F);
     }
 
     @Override
@@ -67,8 +78,18 @@ public class HellfireForgeRenderer implements BlockEntityRenderer<HellfireForgeB
         submitSlot(s, HellfireForgeBlockEntity.WEST, 1 / 16F, CORNER_OFFSET, 1 / 16F, poseStack, collector);
         submitSlot(s, HellfireForgeBlockEntity.NORTH, 15 / 16F, CORNER_OFFSET, 1 / 16F, poseStack, collector);
         submitSlot(s, HellfireForgeBlockEntity.EAST, 15 / 16F, CORNER_OFFSET, 15 / 16F, poseStack, collector);
-        submitSlot(s, HellfireForgeBlockEntity.GEM_SLOT, 0.5F, 1, 0.5F, poseStack, collector);
+        submitGem(s, poseStack, collector);
         submitSlot(s, HellfireForgeBlockEntity.OUTPUT_SLOT, 0.5F, 1.5F, 0.5F, poseStack, collector);
+    }
+
+    private void submitGem(State s, PoseStack poseStack, SubmitNodeCollector collector) {
+        if (!s.present[HellfireForgeBlockEntity.GEM_SLOT]) return;
+        poseStack.pushPose();
+        poseStack.translate(0.5F, GEM_HEIGHT + s.gemBob, 0.5F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(s.gemYaw));
+        poseStack.scale(GEM_SCALE, GEM_SCALE, GEM_SCALE);
+        s.items[HellfireForgeBlockEntity.GEM_SLOT].submit(poseStack, collector, s.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+        poseStack.popPose();
     }
 
     private void submitSlot(State s, int slotIndex, float x, float y, float z, PoseStack poseStack, SubmitNodeCollector collector) {

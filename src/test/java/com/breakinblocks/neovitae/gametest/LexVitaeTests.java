@@ -25,6 +25,7 @@ import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import com.breakinblocks.neovitae.common.datacomponent.NVDataComponents;
 import com.breakinblocks.neovitae.common.item.NVItems;
+import com.breakinblocks.neovitae.common.item.soul.LexVitaeGrowth;
 import com.breakinblocks.neovitae.common.item.soul.LexVitaeItem;
 import com.breakinblocks.neovitae.gametest.base.NVTestRegistrar;
 import com.breakinblocks.neovitae.ritual.RitualHelper;
@@ -219,8 +220,8 @@ public final class LexVitaeTests {
 
             helper.runAfterDelay(1, () -> {
                 try {
-                    LexVitaeItem.beamAoe(helper.getLevel(), player, player.getMainHandItem(),
-                            helper.absolutePos(center), Direction.SOUTH);
+                    LexVitaeItem.breakAoe(helper.getLevel(), player, player.getMainHandItem(),
+                            helper.absolutePos(center), Direction.SOUTH.getAxis());
                     helper.assertBlockNotPresent(Blocks.STONE, new BlockPos(1, 2, 1));
                     helper.assertBlockNotPresent(Blocks.STONE, new BlockPos(3, 2, 1));
                     helper.assertBlockNotPresent(Blocks.STONE, new BlockPos(2, 1, 1));
@@ -232,6 +233,76 @@ public final class LexVitaeTests {
                     LexVitaeItem.setBeaming(player, false);
                 }
             });
+        });
+
+        r.add("lex_vitae/fells_natural_tree", 60, helper -> {
+            for (int y = 1; y <= 4; y++) {
+                helper.setBlock(new BlockPos(2, y, 1), Blocks.OAK_LOG.defaultBlockState());
+            }
+            helper.setBlock(new BlockPos(2, 5, 1), Blocks.OAK_LEAVES.defaultBlockState());
+
+            Player player = armedPlayer(helper, 0);
+            helper.runAfterDelay(1, () -> {
+                postBreak(helper, player, helper.absolutePos(new BlockPos(2, 1, 1)));
+                for (int y = 2; y <= 4; y++) {
+                    helper.assertBlockNotPresent(Blocks.OAK_LOG, new BlockPos(2, y, 1));
+                }
+                helper.succeed();
+            });
+        });
+
+        r.add("lex_vitae/does_not_fell_log_builds", 60, helper -> {
+            for (int y = 1; y <= 4; y++) {
+                helper.setBlock(new BlockPos(2, y, 1), Blocks.OAK_LOG.defaultBlockState());
+            }
+
+            Player player = armedPlayer(helper, 0);
+            helper.runAfterDelay(1, () -> {
+                postBreak(helper, player, helper.absolutePos(new BlockPos(2, 1, 1)));
+                for (int y = 2; y <= 4; y++) {
+                    helper.assertBlockPresent(Blocks.OAK_LOG, new BlockPos(2, y, 1));
+                }
+                helper.succeed();
+            });
+        });
+
+        r.add("lex_vitae/sneaking_skips_felling", 60, helper -> {
+            for (int y = 1; y <= 3; y++) {
+                helper.setBlock(new BlockPos(2, y, 1), Blocks.OAK_LOG.defaultBlockState());
+            }
+            helper.setBlock(new BlockPos(2, 4, 1), Blocks.OAK_LEAVES.defaultBlockState());
+
+            Player player = armedPlayer(helper, 0);
+            player.setShiftKeyDown(true);
+            helper.runAfterDelay(1, () -> {
+                postBreak(helper, player, helper.absolutePos(new BlockPos(2, 1, 1)));
+                helper.assertBlockPresent(Blocks.OAK_LOG, new BlockPos(2, 2, 1));
+                helper.succeed();
+            });
+        });
+
+        r.add("lex_vitae/growth_curve_is_consistent", 20, helper -> {
+            for (int level = 0; level <= 80; level++) {
+                double threshold = LexVitaeGrowth.experienceForLevel(level);
+                helper.assertTrue(LexVitaeGrowth.levelFor(threshold) == level,
+                        "Level " + level + " threshold resolved to " + LexVitaeGrowth.levelFor(threshold));
+                if (level > 0) {
+                    helper.assertTrue(LexVitaeGrowth.levelFor(threshold - 0.001) == level - 1,
+                            "Just below level " + level + " should still be level " + (level - 1));
+                }
+            }
+            helper.assertTrue(LexVitaeGrowth.wearResistance(10) == 0.5, "Level 10 should ignore half of all wear");
+            helper.assertTrue(LexVitaeGrowth.fortuneBonus(14) == 0 && LexVitaeGrowth.fortuneBonus(15) == 1,
+                    "Fortune should start at level 15");
+            helper.succeed();
+        });
+
+        r.add("lex_vitae/experience_grows_level", 20, helper -> {
+            Player player = armedPlayer(helper, 0);
+            ItemStack lex = player.getMainHandItem();
+            LexVitaeGrowth.addExperience(lex, player, LexVitaeGrowth.experienceForLevel(3));
+            helper.assertTrue(LexVitaeGrowth.getLevel(lex) == 3, "Lex should be level 3, is " + LexVitaeGrowth.getLevel(lex));
+            helper.succeed();
         });
 
         r.add("lex_vitae/active_lex_carries_attack_modifiers", 60, helper -> {
@@ -267,8 +338,8 @@ public final class LexVitaeTests {
 
             helper.runAfterDelay(1, () -> {
                 try {
-                    LexVitaeItem.beamAoe(helper.getLevel(), player, player.getMainHandItem(),
-                            helper.absolutePos(center), Direction.SOUTH);
+                    LexVitaeItem.breakAoe(helper.getLevel(), player, player.getMainHandItem(),
+                            helper.absolutePos(center), Direction.SOUTH.getAxis());
                     helper.assertBlockNotPresent(Blocks.STONE, neighbor);
                     if (player.getInventory().countItem(Items.COBBLESTONE) == 0) {
                         helper.fail("Beam-mined drops should vacuum into the player's inventory");

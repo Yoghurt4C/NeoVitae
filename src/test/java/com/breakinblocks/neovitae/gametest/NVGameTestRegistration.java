@@ -44,6 +44,7 @@ public class NVGameTestRegistration {
         OmniRoutingNodeTests.register(r);
         SpiritAccumulatorTests.register(r);
         SpiritusRoutingTests.register(r);
+        RoutingFilterRuleTests.register(r);
         SpiritusTests.register(r);
         TabulaVitaeTests.register(r);
         UnboundedFlightTests.register(r);
