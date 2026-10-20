@@ -1790,8 +1790,8 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         add("gui.neovitae.routing.inventory_neighbor", "Connected inventory: %s");
         add("gui.neovitae.routing.block_neighbor", "Block: %s");
         add("gui.neovitae.routing.slot.empty", "Filter slot empty");
-        add("gui.neovitae.routing.bucket.set", "Right-click with a bucket to set fluid filter");
-        add("gui.neovitae.routing.bucket.clear", "Right-click with empty bucket to clear");
+        add("gui.neovitae.routing.bucket.set", "Left-click with a bucket to set the fluid filter");
+        add("gui.neovitae.routing.bucket.clear", "Right-click to clear");
         add("gui.neovitae.routing.side.toggle", "Click to toggle side");
         add("gui.neovitae.routing.side.disabled_blocks", "Disabled sides do not push or pull");
         add("gui.neovitae.routing.filter.switch", "Switch filter mode");
@@ -1802,7 +1802,7 @@ public class NVLanguageProvider extends LanguageProvider implements ModonomiconL
         add("gui.neovitae.routing.filter.blacklist_empty", "Blacklist with no entries: everything matches");
         add("gui.neovitae.routing.filter.fluid_mode", "Fluid mode");
         add("gui.neovitae.routing.filter.fluid_explicit", "Explicit: only the listed fluids");
-        add("gui.neovitae.routing.filter.fluid_automatch", "Auto-match: any fluid present in the network");
+        add("gui.neovitae.routing.filter.fluid_automatch", "Auto-match: mirrors the neighbor tank");
         add("gui.neovitae.routing.rate", "Rate");
         add("gui.neovitae.routing.rate_label", "Rate (FE/t):");
         add("gui.neovitae.routing.rate_max", "Max: %s FE/t");
