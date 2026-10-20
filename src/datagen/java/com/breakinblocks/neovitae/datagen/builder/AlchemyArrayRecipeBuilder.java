@@ -33,6 +33,10 @@ public class AlchemyArrayRecipeBuilder {
         return new AlchemyArrayRecipeBuilder(new ItemStackTemplate(output.asItem(), count));
     }
 
+    public static AlchemyArrayRecipeBuilder build(ItemStackTemplate output) {
+        return new AlchemyArrayRecipeBuilder(output);
+    }
+
     public AlchemyArrayRecipeBuilder base(ItemLike item) {
         this.baseInput = Ingredient.of(item);
         return this;

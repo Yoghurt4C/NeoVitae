@@ -2320,6 +2320,16 @@ public class NVRecipeProvider extends RecipeProvider {
                 .texture("textures/models/alchemyarrays/bindingarray.png")
                 .save(output, "sentient_boots");
 
+        Holder<SentientUpgrade> elytra = sentientUpgrades.getOrThrow(SentientUpgrades.ELYTRA);
+        DataComponentPatch elytraPatch = DataComponentPatch.builder()
+                .set(NVDataComponents.UPGRADE_TOME_DATA.get(), new UpgradeTome(elytra, 1.0f))
+                .build();
+        AlchemyArrayRecipeBuilder.build(new ItemStackTemplate(NVItems.UPGRADE_TOME.get(), elytraPatch))
+                .base(NVItems.REAGENT_BINDING.get())
+                .added(Items.ELYTRA)
+                .texture("textures/models/alchemyarrays/bindingarray.png")
+                .save(output, "elytra_tome");
+
         // Training Bracelet
         AlchemyArrayRecipeBuilder.build(NVItems.TRAINING_BRACELET.get())
                 .base(NVItems.REAGENT_BINDING.get())
