@@ -76,6 +76,8 @@ import com.breakinblocks.neovitae.client.screen.RitualLedgerScreen;
 import com.breakinblocks.neovitae.client.screen.SpiritCacheScreen;
 import com.breakinblocks.neovitae.client.screen.TeleposerScreen;
 import com.breakinblocks.neovitae.client.color.AthanorGlowColor;
+import com.breakinblocks.neovitae.client.color.PillarAccentColor;
+import com.breakinblocks.neovitae.client.color.PillarAccentItemColor;
 import com.breakinblocks.neovitae.client.color.RitualAnchorColor;
 import com.breakinblocks.neovitae.client.color.RoutingNodeColor;
 import com.breakinblocks.neovitae.common.block.NVBlocks;
@@ -163,11 +165,15 @@ public class ClientModEventHandler {
                 NVBlocks.OMNI_ROUTING_NODE.block().get());
         event.register(List.of(new AthanorGlowColor()), NVBlocks.ATHANOR_BLOCK.block().get());
         event.register(List.of(new RitualAnchorColor()), NVBlocks.RITUAL_ANCHOR.block().get());
+        event.register(List.of(new PillarAccentColor()),
+                NVBlocks.INVERSION_PILLAR.block().get(),
+                NVBlocks.INVERSION_PILLAR_CAP.block().get());
     }
 
     @SubscribeEvent
     public static void registerItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
         event.register(AnointmentColor.ID, AnointmentColor.MAP_CODEC);
+        event.register(PillarAccentItemColor.ID, PillarAccentItemColor.MAP_CODEC);
         event.register(MaterialItemColor.ID, MaterialItemColor.MAP_CODEC);
         event.register(FlaskColor.ID, FlaskColor.MAP_CODEC);
         event.register(TippedDaggerColor.ID, TippedDaggerColor.MAP_CODEC);

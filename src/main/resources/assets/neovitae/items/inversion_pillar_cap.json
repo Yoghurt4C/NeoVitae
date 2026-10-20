@@ -1,6 +1,11 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "neovitae:item/inversion_pillar_cap"
+    "model": "neovitae:item/inversion_pillar_cap",
+    "tints": [
+      {
+        "type": "neovitae:pillar_accent"
+      }
+    ]
   }
 }

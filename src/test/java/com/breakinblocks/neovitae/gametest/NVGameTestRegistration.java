@@ -71,5 +71,6 @@ public class NVGameTestRegistration {
         RitualAnchorTests.register(r);
         DungeonBlockRotationTests.register(r);
         DungeonRoomBoundsTests.register(r);
+        PillarAccentTests.register(r);
     }
 }
