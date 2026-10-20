@@ -70,5 +70,6 @@ public class NVGameTestRegistration {
         CelerityRitualTests.register(r);
         RitualAnchorTests.register(r);
         DungeonBlockRotationTests.register(r);
+        DungeonRoomBoundsTests.register(r);
     }
 }
