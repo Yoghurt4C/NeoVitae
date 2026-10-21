@@ -13,12 +13,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import com.breakinblocks.neovitae.api.soul.AnimaTicket;
+import com.breakinblocks.neovitae.common.attribute.NVAttributes;
 import com.breakinblocks.neovitae.common.datacomponent.Anima;
 import com.breakinblocks.neovitae.common.datacomponent.Binding;
 import com.breakinblocks.neovitae.common.datacomponent.NVDataComponents;
 import com.breakinblocks.neovitae.common.entity.BloodShieldEntity;
 import com.breakinblocks.neovitae.common.entity.projectile.EntityThrowingDagger;
+import com.breakinblocks.neovitae.common.event.BloodSiphonHandler;
 import com.breakinblocks.neovitae.common.item.BloodOrbItem;
 import com.breakinblocks.neovitae.common.item.NVItems;
 import com.breakinblocks.neovitae.gametest.base.NVTestRegistrar;
@@ -61,7 +65,37 @@ public final class SanguineWardTests {
         return arrow;
     }
 
+    private static void checkMitigatedDamage(GameTestHelper helper, int ev, float expectedDamage, int expectedEV) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.getAttribute(NVAttributes.BLOOD_SHIELD).setBaseValue(0.5);
+        Anima anima = AnimaHelper.getAnima(player.getUUID());
+        anima.set(AnimaTicket.create(ev), 1000);
+        DamageContainer damage = new DamageContainer(player.damageSources().generic(), 10.0f);
+        damage.setNewDamage(2.0f);
+        LivingDamageEvent.Pre event = new LivingDamageEvent.Pre(player, damage);
+
+        BloodSiphonHandler.onDamageTaken(event);
+
+        if (Math.abs(event.getNewDamage() - expectedDamage) > 0.0001f) {
+            helper.fail("Expected mitigated damage " + expectedDamage + ", got " + event.getNewDamage());
+            return;
+        }
+        if (anima.getCurrentEV() != expectedEV) {
+            helper.fail("Expected " + expectedEV + " EV remaining, got " + anima.getCurrentEV());
+            return;
+        }
+        helper.succeed();
+    }
+
     public static void register(NVTestRegistrar r) {
+        r.add("sanguine_ward/attribute_preserves_mitigation_with_full_ev", 20, helper -> {
+            checkMitigatedDamage(helper, 1000, 1.9f, 990);
+        });
+
+        r.add("sanguine_ward/attribute_preserves_mitigation_with_partial_ev", 20, helper -> {
+            checkMitigatedDamage(helper, 5, 1.95f, 0);
+        });
+
         r.add("sanguine_ward/blocks_projectiles_from_the_front", 80, helper -> {
             helper.runAfterDelay(1, () -> {
                 Player player = wardedPlayer(helper);
