@@ -1,6 +1,7 @@
 package com.breakinblocks.neovitae.gametest;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
@@ -14,9 +15,11 @@ import com.breakinblocks.neovitae.structures.DungeonRoom;
 import com.breakinblocks.neovitae.structures.DungeonRoomRegistry;
 import com.breakinblocks.neovitae.structures.RoomBoundsProcessor;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public final class DungeonRoomBoundsTests {
 
@@ -51,6 +54,28 @@ public final class DungeonRoomBoundsTests {
                 checked++;
             }
             helper.assertTrue(checked > 0, "No box-shaped dungeon rooms were checked");
+            helper.succeed();
+        });
+
+        r.add("dungeon/door_fill_covers_doorway_in_every_facing", 20, helper -> {
+            DungeonRoom room = new DungeonRoom();
+            for (Rotation rotation : Rotation.values()) {
+                for (Direction facing : Direction.Plane.HORIZONTAL) {
+                    StructurePlaceSettings settings = new StructurePlaceSettings().setMirror(Mirror.NONE).setRotation(rotation);
+                    Direction worldFacing = rotation.rotate(facing);
+                    Direction side = worldFacing.getClockWise();
+                    Set<BlockPos> expected = new HashSet<>();
+                    for (int i = -1; i <= 1; i++) {
+                        for (int j = -1; j <= 1; j++) {
+                            expected.add(BlockPos.ZERO.relative(side, i).above(j));
+                        }
+                    }
+                    Set<BlockPos> filled = new HashSet<>(room.getDoorFillDescriptor(settings, BlockPos.ZERO, BlockPos.ZERO, facing)
+                            .getContainedPositions(BlockPos.ZERO));
+                    helper.assertTrue(filled.equals(expected),
+                            "Door facing " + worldFacing + " (rotation " + rotation + ") fills " + filled + " instead of " + expected);
+                }
+            }
             helper.succeed();
         });
 
