@@ -159,7 +159,7 @@ public class ClientEventHandler {
         addToTooltip(NVDataComponents.UPGRADES.get(), context, toAdd::add, flags, stack);
 
         // add after name. idgaf
-        tooltip.addAll(1, toAdd);
+        tooltip.addAll(tooltip.isEmpty() ? 0 : 1, toAdd);
 
         if (stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IEnchantmentAmplifier) {
             tooltip.add(Component.translatable("tooltip.neovitae.enchantment_amplifier").withStyle(ChatFormatting.LIGHT_PURPLE));
