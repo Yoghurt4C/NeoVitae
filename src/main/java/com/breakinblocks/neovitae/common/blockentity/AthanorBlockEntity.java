@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -104,6 +105,12 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider,
     @Nullable
     private Direction outputFace = null;
     public static final int INVENTORY_SIZE = OUTPUT_SLOT + NUM_OUTPUTS;
+    private static final int LEGACY_TOOL_SLOT = 0;
+    private static final int LEGACY_INPUT_SLOT = 1;
+    private static final int LEGACY_INPUT_BUCKET_SLOT = 2;
+    private static final int LEGACY_OUTPUT_BUCKET_SLOT = 3;
+    private static final int LEGACY_OUTPUT_SLOT = 4;
+    private static final int LEGACY_INVENTORY_SIZE = LEGACY_OUTPUT_SLOT + NUM_OUTPUTS;
     public static final int TANK_CAPACITY = 20 * FluidType.BUCKET_VOLUME;
 
     private double progress = 0;
@@ -178,6 +185,28 @@ public class AthanorBlockEntity extends BaseBlockEntity implements MenuProvider,
         protected int getCapacity(int index, ItemResource resource) {
             if (index == INPUT_BUCKET_SLOT || index == OUTPUT_BUCKET_SLOT) return 1;
             return super.getCapacity(index, resource);
+        }
+
+        @Override
+        public void deserialize(ValueInput input) {
+            super.deserialize(input);
+            int saved = size();
+            if (saved == INVENTORY_SIZE) return;
+            NonNullList<ItemStack> resized = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
+            if (saved == LEGACY_INVENTORY_SIZE) {
+                resized.set(TOOL_SLOT, getStackInSlot(LEGACY_TOOL_SLOT));
+                resized.set(INPUT_START, getStackInSlot(LEGACY_INPUT_SLOT));
+                resized.set(INPUT_BUCKET_SLOT, getStackInSlot(LEGACY_INPUT_BUCKET_SLOT));
+                resized.set(OUTPUT_BUCKET_SLOT, getStackInSlot(LEGACY_OUTPUT_BUCKET_SLOT));
+                for (int i = 0; i < NUM_OUTPUTS; i++) {
+                    resized.set(OUTPUT_SLOT + i, getStackInSlot(LEGACY_OUTPUT_SLOT + i));
+                }
+            } else {
+                for (int i = 0; i < Math.min(saved, INVENTORY_SIZE); i++) {
+                    resized.set(i, getStackInSlot(i));
+                }
+            }
+            setStacks(resized);
         }
 
         @Override
